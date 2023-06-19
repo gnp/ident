@@ -178,8 +178,8 @@ object ISIN {
   /** Create an ISIN from a country code and security identifier, computing the correct check digit automatically.
     */
   def make(countryCode: String, securityIdentifier: String): Either[String, ISIN] = {
-    val cc = countryCode.trim.toUpperCase
-    val id = securityIdentifier.trim.toUpperCase
+    val cc = normalize(countryCode)
+    val id = normalize(securityIdentifier)
 
     if (!isValidCountryCodeFormatStrict(cc))
       Left(s"Format of country code '$countryCode' is not valid")
@@ -193,7 +193,7 @@ object ISIN {
   }
 
   def parse(value: String): Either[String, ISIN] = {
-    val temp = value.trim.toUpperCase
+    val temp = normalize(value)
 
     temp match {
       case isinFormat(countryCode, securityIdentifier, checkDigit) =>
