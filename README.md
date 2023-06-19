@@ -3,7 +3,9 @@
 ![CI][Badge-CI]
 
 A Scala class for working with validated International Security Identifiers
-(ISINs) as defined in [ISO 6166](https://www.iso.org/standard/78502.html).
+(ISINs) as defined in [ISO 6166:2021 Financial services — International
+securities identification number
+(ISIN)](https://www.iso.org/standard/78502.html) ("The Standard").
 
 This library is part of the Financial Identifiers series:
 
@@ -30,8 +32,8 @@ object ISINTestMain {
     ISIN.parse(isinString) match {
       case Right(isin) =>
         println(s"Parsed ISIN: $isin"); // "US0378331005"
-        println(s"  Prefix: ${isin.prefix}"); // "US"
-        println(s"  Basic code: ${isin.basicCode}"); // "037833100"
+        println(s"  Country code: ${isin.countryCode}"); // "US"
+        println(s"  Security identifier: ${isin.securityIdentifier}"); // "037833100"
         println(s"  Check digit: ${isin.checkDigit}"); // '5'
       case Left(err) =>
         throw new RuntimeException(s"Unable to parse ISIN $isinString: $err")
