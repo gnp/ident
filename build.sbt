@@ -112,7 +112,10 @@ lazy val root = (project in file("."))
   )
   .settings(
     name := "root",
-    crossScalaVersions := Nil // To avoid "double publishing"
+    crossScalaVersions := Nil, // To avoid "double publishing"
+    publish := {},
+    publish / skip := true,
+    publishLocal := {}
   )
 
 lazy val isin = (project in file("isin"))
