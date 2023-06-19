@@ -84,7 +84,8 @@ val stdCompilerOptions2 = Seq(
   "-Xlint:type-parameter-shadow", // A local type parameter shadows a type already in scope.
   "-Xlint:unused", // Enable -Ywarn-unused:imports,privates,locals,implicits.
   "-Xlint:valpattern", // Enable pattern checks in val definitions.
-  "-Xsource:3"
+  "-Xsource:3",
+  "-Xfatal-warnings"
 )
 
 val stdCompilerOptions3 = Seq(
@@ -100,7 +101,8 @@ val stdCompilerOptions3 = Seq(
   "-Wunused:locals", // Warn if a local definition is unused.
   "-Wunused:params", // Enable -Wunused:explicits,implicits.
   "-Wunused:privates", // Warn if a private member is unused.
-  "-Wvalue-discard" // Warn when non-Unit expression results are unused.
+  "-Wvalue-discard", // Warn when non-Unit expression results are unused.
+  "-Xfatal-warnings"
 )
 
 lazy val root = (project in file("."))
@@ -134,9 +136,6 @@ lazy val isin = (project in file("isin"))
       .map(_.exclude("commons-logging", "commons-logging"))
       .map(_.exclude("log4j", "log4j"))
       .map(_.exclude("org.slf4j", "slf4j-log4j12")),
-    scalacOptions ++= Seq(
-      "-Xfatal-warnings"
-    )
   )
 
 lazy val isinCirce = (project in file("isin-circe"))
@@ -162,7 +161,4 @@ lazy val isinCirce = (project in file("isin-circe"))
       .map(_.exclude("commons-logging", "commons-logging"))
       .map(_.exclude("log4j", "log4j"))
       .map(_.exclude("org.slf4j", "slf4j-log4j12")),
-    scalacOptions ++= Seq(
-      "-Xfatal-warnings"
-    )
   )
