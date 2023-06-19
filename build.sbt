@@ -13,11 +13,11 @@ ThisBuild / organizationHomepage := Some(url("https://github.com/gnp"))
 ThisBuild / description := "ISIN."
 ThisBuild / startYear := Some(2023)
 ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / homepage := Some(url("https://github.com/gnp/ident-isin"))
+ThisBuild / homepage := Some(url("https://github.com/gnp/isin-sc"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/gnp/ident-isin"),
-    "scm:git@github.com:gnp/ident-isin.git"
+    url("https://github.com/gnp/isin-sc"),
+    "scm:git@github.com:gnp/isin-sc.git"
   )
 )
 ThisBuild / developers := List(
@@ -109,7 +109,7 @@ lazy val root = (project in file("."))
     isinCirce
   )
   .settings(
-    name := "ident-isin",
+    name := "root",
     crossScalaVersions := Nil // To avoid "double publishing"
   )
 

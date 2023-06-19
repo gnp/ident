@@ -5,4 +5,4 @@ publishMavenStyle := true
 licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 import xerial.sbt.Sonatype._
-sonatypeProjectHosting := Some(GitHubHosting("gnp", "ident-isin", "gregor@abcelo.com"))
+sonatypeProjectHosting := Some(GitHubHosting("gnp", "isin-sc", "gregor@abcelo.com"))
