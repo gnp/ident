@@ -32,9 +32,7 @@ case class ISIN private (value: String) {
   def countryCode: String = value.substring(0, 2)
   def securityIdentifier: String = value.substring(2, 11)
   def checkDigit: String = value.substring(11, 12)
-  def toAssetIdString: String = s"isin:$value"
   override def toString(): String = value
-  def toIdentifierString: String = s"isin:$value"
 }
 
 object ISIN {
