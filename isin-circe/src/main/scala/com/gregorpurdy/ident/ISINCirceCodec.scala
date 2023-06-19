@@ -18,22 +18,13 @@ package com.gregorpurdy.ident
 
 import io.circe.Decoder
 import io.circe.Encoder
-import io.circe.HCursor
-import io.circe.Json
 
 object ISINCirceCodec {
 
-  implicit val isinCirceEncoder: Encoder[ISIN] = new Encoder[ISIN] {
-    final def apply(isin: ISIN): Json = Json.fromString(isin.value)
-  }
+  implicit val isinCirceEncoder: Encoder[ISIN] =
+    Encoder.encodeString.contramap(_.value)
 
-  implicit val isinCirceDecoder: Decoder[ISIN] = new Decoder[ISIN] {
-    final def apply(c: HCursor): Decoder.Result[ISIN] =
-      for {
-        s <- c.as[String]
-      } yield {
-        ISIN(s)
-      }
-  }
+  implicit val isinCirceDecoder: Decoder[ISIN] =
+    Decoder.decodeString.emap(ISIN.parse)
 
 }

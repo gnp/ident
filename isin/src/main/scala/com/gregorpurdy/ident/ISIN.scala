@@ -44,29 +44,44 @@ object ISIN {
   val checkDigitFormat: Regex = "[0-9]".r
   val isinFormat: Regex = "([A-Z]{2})([A-Z0-9]{9})([0-9])".r
 
+  private def normalize(s: String) = s.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
+
+  /** Calculate the Check Digit for a given Country Code and Security Identifier.
+    *
+    * @param countryCode
+    *   A two-letter ISO Country Code.
+    * @param securityIdentifier
+    *   A nine-character alphanumeric identifier
+    * @return
+    *   a `Right` value containing the Check Digit (a one-character String), or a `Left` value containing an error
+    *   message
+    */
   def calculateCheckDigit(
       countryCode: String,
       securityIdentifier: String
-  ): String = {
-    val tempCountryCode = countryCode.trim.toUpperCase
-    val tempSecurityIdentifier = securityIdentifier.trim.toUpperCase
+  ): Either[String, String] = {
+    val tempCountryCode = normalize(countryCode)
+    val tempSecurityIdentifier = normalize(securityIdentifier)
 
     if (!isValidCountryCodeFormatStrict(tempCountryCode))
-      throw new IllegalArgumentException(
-        s"Format of country code '$countryCode' is not valid"
-      )
-
-    if (!isValidSecurityIdentifierFormatStrict(tempSecurityIdentifier))
-      throw new IllegalArgumentException(
-        s"Format of security identifier '$securityIdentifier' is not valid"
-      )
-
-    calculateCheckDigitUnsafe(tempCountryCode, tempSecurityIdentifier)
+      Left(s"Format of country code '$countryCode' is not valid")
+    else if (!isValidSecurityIdentifierFormatStrict(tempSecurityIdentifier))
+      Left(s"Format of security identifier '$securityIdentifier' is not valid")
+    else
+      Right(calculateCheckDigitUnsafe(tempCountryCode, tempSecurityIdentifier))
   }
 
-  /** This method is used internally when the countryCode and securityIdentifier have already been validated to be the
-    * right format.
+  /** This method is used internally when the `countryCode` and `securityIdentifier` have already been validated to be
+    * the right format.
+    *
+    * @param countryCode
+    *   A two-letter ISO Country Code.
+    * @param securityIdentifier
+    *   A nine-character alphanumeric identifier
+    * @return
+    *   the Check Digit (a one-character String)
     */
+  @throws[IllegalStateException]("If encountering an unexpected character")
   private def calculateCheckDigitUnsafe(
       countryCode: String,
       securityIdentifier: String
@@ -107,19 +122,19 @@ object ISIN {
     countryCodeFormat.matches(string)
 
   def isValidCountryCodeFormatLoose(string: String): Boolean =
-    countryCodeFormat.matches(string.trim.toUpperCase)
+    countryCodeFormat.matches(normalize(string))
 
   def isValidSecurityIdentifierFormatStrict(string: String): Boolean =
     securityIdentifierFormat.matches(string)
 
   def isValidSecurityIdentifierFormatLoose(string: String): Boolean =
-    securityIdentifierFormat.matches(string.trim.toUpperCase)
+    securityIdentifierFormat.matches(normalize(string))
 
   def isValidCheckDigitFormatStrict(string: String): Boolean =
     checkDigitFormat.matches(string)
 
   def isValidCheckDigitFormatLoose(string: String): Boolean =
-    checkDigitFormat.matches(string.trim)
+    checkDigitFormat.matches(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 11 and each component is the right mix of letters and/or digits. The apply() method is more permissive, because it
@@ -131,75 +146,60 @@ object ISIN {
   /** This returns true if the input String would be allowed as an argument to the apply() method.
     */
   def isValidIsinFormatLoose(string: String): Boolean =
-    isinFormat.matches(string.trim.toUpperCase)
+    isinFormat.matches(normalize(string))
 
-  def apply(
+  def make(
       countryCode: String,
       securityIdentifier: String,
       checkDigit: String
-  ): ISIN = {
-    val tempCountryCode = countryCode.trim.toUpperCase
-    val tempSecurityIdentifier = securityIdentifier.trim.toUpperCase
-    val tempCheckDigit = checkDigit.trim.toUpperCase
+  ): Either[String, ISIN] = {
+    val cc = normalize(countryCode)
+    val id = normalize(securityIdentifier)
+    val cd = normalize(checkDigit)
 
-    if (!isValidCountryCodeFormatStrict(tempCountryCode))
-      throw new IllegalArgumentException(
-        s"Format of country code '$countryCode' is not valid"
-      )
+    if (!isValidCountryCodeFormatStrict(cc))
+      Left(s"Format of country code '$countryCode' is not valid")
+    else if (!isValidSecurityIdentifierFormatStrict(id))
+      Left(s"Format of security identifier '$securityIdentifier' is not valid")
+    else if (!isValidCheckDigitFormatStrict(cd))
+      Left(s"Format of check digit '$checkDigit' is not valid")
+    else {
+      val correctCheckDigit = calculateCheckDigitUnsafe(cc, id)
 
-    if (!isValidSecurityIdentifierFormatStrict(tempSecurityIdentifier))
-      throw new IllegalArgumentException(
-        s"Format of security identifier '$securityIdentifier' is not valid"
-      )
-
-    if (!isValidCheckDigitFormatStrict(tempCheckDigit))
-      throw new IllegalArgumentException(
-        s"Format of check digit '$checkDigit' is not valid"
-      )
-
-    val correctCheckDigit =
-      calculateCheckDigitUnsafe(tempCountryCode, tempSecurityIdentifier)
-
-    if (tempCheckDigit != correctCheckDigit)
-      throw new IllegalArgumentException(
-        s"Check digit '$checkDigit' is not correct for country code '$countryCode' and security identifier '$securityIdentifier'. It should be '$correctCheckDigit'"
-      )
-
-    new ISIN(s"$tempCountryCode$tempSecurityIdentifier$tempCheckDigit")
+      if (cd != correctCheckDigit)
+        Left(
+          s"Check digit '$checkDigit' is not correct for country code '$countryCode' and security identifier '$securityIdentifier'. It should be '$correctCheckDigit'"
+        )
+      else
+        Right(new ISIN(s"$cc$id$cd"))
+    }
   }
 
   /** Create an ISIN from a country code and security identifier, computing the correct check digit automatically.
     */
-  def apply(countryCode: String, securityIdentifier: String): ISIN = {
-    val tempCountryCode = countryCode.trim.toUpperCase
-    val tempSecurityIdentifier = securityIdentifier.trim.toUpperCase
+  def make(countryCode: String, securityIdentifier: String): Either[String, ISIN] = {
+    val cc = countryCode.trim.toUpperCase
+    val id = securityIdentifier.trim.toUpperCase
 
-    if (!isValidCountryCodeFormatStrict(tempCountryCode))
-      throw new IllegalArgumentException(
-        s"Format of country code '$countryCode' is not valid"
-      )
+    if (!isValidCountryCodeFormatStrict(cc))
+      Left(s"Format of country code '$countryCode' is not valid")
+    else if (!isValidSecurityIdentifierFormatStrict(id))
+      Left(s"Format of security identifier '$securityIdentifier' is not valid")
+    else {
+      val cd = calculateCheckDigitUnsafe(cc, id)
 
-    if (!isValidSecurityIdentifierFormatStrict(tempSecurityIdentifier))
-      throw new IllegalArgumentException(
-        s"Format of security identifier '$securityIdentifier' is not valid"
-      )
-
-    val correctCheckDigit =
-      calculateCheckDigitUnsafe(tempCountryCode, tempSecurityIdentifier)
-
-    new ISIN(s"$tempCountryCode$tempSecurityIdentifier$correctCheckDigit")
+      Right(new ISIN(s"$cc$id$cd"))
+    }
   }
 
-  def apply(value: String): ISIN = {
+  def parse(value: String): Either[String, ISIN] = {
     val temp = value.trim.toUpperCase
 
     temp match {
       case isinFormat(countryCode, securityIdentifier, checkDigit) =>
-        apply(countryCode, securityIdentifier, checkDigit)
+        make(countryCode, securityIdentifier, checkDigit)
       case _ =>
-        throw new IllegalArgumentException(
-          s"Input string is not in valid ISIN format: '$value'"
-        )
+        Left(s"Input string is not in valid ISIN format: '$value'")
     }
   }
 
