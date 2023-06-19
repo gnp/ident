@@ -108,7 +108,8 @@ val stdCompilerOptions3 = Seq(
 lazy val root = (project in file("."))
   .aggregate(
     isin,
-    isinCirce
+    isinCirce,
+    examples
   )
   .settings(
     name := "root",
@@ -116,6 +117,23 @@ lazy val root = (project in file("."))
     publish := {},
     publish / skip := true,
     publishLocal := {}
+  )
+
+lazy val examples = (project in file("examples"))
+  .dependsOn(isin)
+  .settings(
+    name := "examples",
+    crossScalaVersions := Nil,
+    publish := {},
+    publish / skip := true,
+    publishLocal := {},
+    crossScalaVersions := Seq(Scala2Version, Scala3Version),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) => stdCompilerOptions2
+        case _            => stdCompilerOptions3
+      }
+    }
   )
 
 lazy val isin = (project in file("isin"))
