@@ -109,6 +109,7 @@ lazy val root = (project in file("."))
   .aggregate(
     isin,
     isinCirce,
+    isinZio,
     examples
   )
   .settings(
@@ -175,6 +176,35 @@ lazy val isinCirce = (project in file("isin-circe"))
     },
     libraryDependencies ++= Seq(
       CirceCore % Compile,
+      Slf4JApi % Compile,
+      JclOverSlf4J % Compile,
+      Log4JOverSlf4J % Compile,
+      JulToSlf4J % Compile,
+      CirceParser % Test,
+      Logback % Test,
+      ZioTest % Test,
+      ZioTestMagnolia % Test,
+      ZioTestSbt % Test
+    )
+      .map(_.exclude("commons-logging", "commons-logging"))
+      .map(_.exclude("log4j", "log4j"))
+      .map(_.exclude("org.slf4j", "slf4j-log4j12")),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+  )
+
+lazy val isinZio = (project in file("isin-zio"))
+  .dependsOn(isin)
+  .settings(
+    name := "isin-zio",
+    crossScalaVersions := Seq(Scala2Version, Scala3Version),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) => stdCompilerOptions2
+        case _            => stdCompilerOptions3
+      }
+    },
+    libraryDependencies ++= Seq(
+      ZioJson % Compile,
       Slf4JApi % Compile,
       JclOverSlf4J % Compile,
       Log4JOverSlf4J % Compile,
