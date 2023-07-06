@@ -1,6 +1,6 @@
 # ISIN
 
-![CI][Badge-CI]
+![CI][Badge-CI] [![Sonatype Releases](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.gregorpurdy.ident/isin_2.13.svg?label=Sonatype%20Release)](https://oss.sonatype.org/content/repositories/releases/com/gregorpurdy/ident/isin_2.13/)
 
 A Scala class for working with validated International Security Identifiers
 (ISINs) as defined in [ISO 6166:2021 Financial services — International
