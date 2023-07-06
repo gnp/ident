@@ -43,6 +43,11 @@ object ISINTestMain {
 ```
 
 
+## JSON
+
+You can use the `isin-circe` or `isin-zio` artifacts to get JSON encoders and decoders for ISINs.
+
+
 ## License
 
 Licensed under Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
