@@ -17,7 +17,7 @@ This library is part of the Financial Identifiers series:
 Add this to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.gregorpurdy.ident" %% "isin" % "0.1.0-SNAPSHOT"
+libraryDependencies += "com.gregorpurdy.ident" %% "isin" % "0.1.0"
 ```
 
 
