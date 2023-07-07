@@ -121,7 +121,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val examples = (project in file("examples"))
-  .dependsOn(isin)
+  .dependsOn(isin, isinCirce, isinZio)
   .settings(
     name := "examples",
     crossScalaVersions := Nil,
@@ -134,7 +134,12 @@ lazy val examples = (project in file("examples"))
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
       }
-    }
+    },
+    libraryDependencies ++= Seq(
+      CirceCore % Compile,
+      CirceGeneric % Compile,
+      CirceParser % Compile
+    )
   )
 
 lazy val isin = (project in file("isin"))
