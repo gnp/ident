@@ -5,19 +5,19 @@ val Scala3Version = "3.3.0"
 
 ThisBuild / scalaVersion := Scala2Version // For JDK 16 compatibility
 
-ThisBuild / organization := "com.gregorpurdy.ident"
+ThisBuild / organization := "com.gregorpurdy"
 ThisBuild / version := "0.1.1-SNAPSHOT"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / organizationName := "Gregor Purdy"
 ThisBuild / organizationHomepage := Some(url("https://github.com/gnp"))
-ThisBuild / description := "ISIN."
+ThisBuild / description := "Scala classes for representing syntactically valid identifiers of various kinds."
 ThisBuild / startYear := Some(2023)
 ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / homepage := Some(url("https://github.com/gnp/isin-sc"))
+ThisBuild / homepage := Some(url("https://github.com/gnp/ident"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/gnp/isin-sc"),
-    "scm:git@github.com:gnp/isin-sc.git"
+    url("https://github.com/gnp/ident"),
+    "scm:git@github.com:gnp/ident.git"
   )
 )
 ThisBuild / developers := List(
@@ -107,9 +107,10 @@ val stdCompilerOptions3 = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(
-    isin,
-    isinCirce,
-    isinZioJson,
+    ident,
+    identCirce,
+    identZioJson,
+    identZioSchema,
     examples
   )
   .settings(
@@ -121,7 +122,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val examples = (project in file("examples"))
-  .dependsOn(isin, isinCirce, isinZioJson, isinZioSchema)
+  .dependsOn(ident, identCirce, identZioJson, identZioSchema)
   .settings(
     name := "examples",
     crossScalaVersions := Nil,
@@ -143,9 +144,9 @@ lazy val examples = (project in file("examples"))
     )
   )
 
-lazy val isin = (project in file("isin"))
+lazy val ident = (project in file("ident"))
   .settings(
-    name := "isin",
+    name := "ident",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -169,10 +170,10 @@ lazy val isin = (project in file("isin"))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
 
-lazy val isinCirce = (project in file("isin-circe"))
-  .dependsOn(isin)
+lazy val identCirce = (project in file("ident-circe"))
+  .dependsOn(ident)
   .settings(
-    name := "isin-circe",
+    name := "ident-circe",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -198,10 +199,10 @@ lazy val isinCirce = (project in file("isin-circe"))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
 
-lazy val isinZioJson = (project in file("isin-zio-json"))
-  .dependsOn(isin)
+lazy val identZioJson = (project in file("ident-zio-json"))
+  .dependsOn(ident)
   .settings(
-    name := "isin-zio",
+    name := "ident-zio-json",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -227,10 +228,10 @@ lazy val isinZioJson = (project in file("isin-zio-json"))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
 
-lazy val isinZioSchema = (project in file("isin-zio-schema"))
-  .dependsOn(isin)
+lazy val identZioSchema = (project in file("ident-zio-schema"))
+  .dependsOn(ident)
   .settings(
-    name := "isin-zio-schema",
+    name := "ident-zio-schema",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
