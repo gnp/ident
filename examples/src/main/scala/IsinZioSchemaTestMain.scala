@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import com.gregorpurdy.ident.ISIN
-import com.gregorpurdy.ident.ISINZIOSchema._
-import zio._
+import com.gregorpurdy.ident.IdentZioSchema.*
+import com.gregorpurdy.ident.Isin
+import zio.*
 import zio.schema.DeriveSchema
 import zio.schema.Schema
-import zio.schema.codec.JsonCodec._
+import zio.schema.codec.JsonCodec.*
 
-object ISINZIOSchemaTestMain extends ZIOAppDefault {
+object IsinZioSchemaTestMain extends ZIOAppDefault {
 
-  case class Security(isin: ISIN, name: String)
+  case class Security(isin: Isin, name: String)
   object Security {
     implicit val schema: Schema[Security] = DeriveSchema.gen[Security]
   }
@@ -31,7 +31,7 @@ object ISINZIOSchemaTestMain extends ZIOAppDefault {
   def run: ZIO[Any, Any, Unit] = for {
     _ <- Console.printLine("")
     _ <- Console.printLine("ISIN ZIO Schema Test Main:")
-    isin <- ZIO.fromEither(ISIN.parse("US0378331005"))
+    isin <- ZIO.fromEither(Isin.parse("US0378331005"))
     inSecurity = Security(isin, "Apple Inc.")
     outJson = jsonCodec(Security.schema).encodeJson(inSecurity, None)
     _ <- Console.printLine(s"Encoded JSON: $outJson")

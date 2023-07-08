@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import com.gregorpurdy.ident.ISIN
-import com.gregorpurdy.ident.ISINCirceCodec._
-import io.circe._
-import io.circe.generic.semiauto._
-import io.circe.parser._
-import io.circe.syntax._
+import com.gregorpurdy.ident.IdentCirce.*
+import com.gregorpurdy.ident.Isin
+import io.circe.*
+import io.circe.generic.semiauto.*
+import io.circe.parser.*
+import io.circe.syntax.*
 
-object ISINCirceTestMain {
+object IsinCirceTestMain {
 
-  case class Security(isin: ISIN, name: String)
+  case class Security(isin: Isin, name: String)
   object Security {
     implicit val securityDecoder: Decoder[Security] = deriveDecoder[Security]
     implicit val securityEncoder: Encoder[Security] = deriveEncoder[Security]
@@ -38,7 +38,7 @@ object ISINCirceTestMain {
     println()
     println("ISIN Circe Test Main:")
 
-    val isin = ISIN.parse("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
+    val isin = Isin.parse("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
     val inSecurity = Security(isin, "Apple Inc.")
 
     println()

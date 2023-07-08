@@ -28,14 +28,14 @@ import scala.util.matching.Regex
   * @see
   *   https://en.wikipedia.org/wiki/International_Securities_Identification_Number
   */
-case class ISIN private (value: String) {
+case class Isin private (value: String) {
   def countryCode: String = value.substring(0, 2)
   def securityIdentifier: String = value.substring(2, 11)
   def checkDigit: String = value.substring(11, 12)
   override def toString(): String = value
 }
 
-object ISIN {
+object Isin {
 
   val countryCodeFormat: Regex = "[A-Z]{2}".r
   val securityIdentifierFormat: Regex = "[A-Z0-9]{9}".r
@@ -150,7 +150,7 @@ object ISIN {
       countryCode: String,
       securityIdentifier: String,
       checkDigit: String
-  ): Either[String, ISIN] = {
+  ): Either[String, Isin] = {
     val cc = normalize(countryCode)
     val id = normalize(securityIdentifier)
     val cd = normalize(checkDigit)
@@ -169,13 +169,13 @@ object ISIN {
           s"Check digit '$checkDigit' is not correct for country code '$countryCode' and security identifier '$securityIdentifier'. It should be '$correctCheckDigit'"
         )
       else
-        Right(new ISIN(s"$cc$id$cd"))
+        Right(new Isin(s"$cc$id$cd"))
     }
   }
 
   /** Create an ISIN from a country code and security identifier, computing the correct check digit automatically.
     */
-  def make(countryCode: String, securityIdentifier: String): Either[String, ISIN] = {
+  def make(countryCode: String, securityIdentifier: String): Either[String, Isin] = {
     val cc = normalize(countryCode)
     val id = normalize(securityIdentifier)
 
@@ -186,11 +186,11 @@ object ISIN {
     else {
       val cd = calculateCheckDigitUnsafe(cc, id)
 
-      Right(new ISIN(s"$cc$id$cd"))
+      Right(new Isin(s"$cc$id$cd"))
     }
   }
 
-  def parse(value: String): Either[String, ISIN] = {
+  def parse(value: String): Either[String, Isin] = {
     val temp = normalize(value)
 
     temp match {

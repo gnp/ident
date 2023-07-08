@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import com.gregorpurdy.ident.ISIN
-import com.gregorpurdy.ident.ISINZIOJSONCodec._
-import zio.json._
+import com.gregorpurdy.ident.IdentZioJson.*
+import com.gregorpurdy.ident.Isin
+import zio.json.*
 
-object ISINZIOJSONTestMain {
+object IsinZioJsonTestMain {
 
-  case class Security(isin: ISIN, name: String)
+  case class Security(isin: Isin, name: String)
   object Security {
     implicit val securityDecoder: JsonDecoder[Security] = DeriveJsonDecoder.gen[Security]
     implicit val securityEncoder: JsonEncoder[Security] = DeriveJsonEncoder.gen[Security]
@@ -35,7 +35,7 @@ object ISINZIOJSONTestMain {
     println()
     println("ISIN ZIO JSON Test Main:")
 
-    val isin = ISIN.parse("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
+    val isin = Isin.parse("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
     val inSecurity = Security(isin, "Apple Inc.")
 
     println()

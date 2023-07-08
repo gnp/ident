@@ -18,7 +18,7 @@ package com.gregorpurdy.ident
 
 import zio.json.*
 
-object ISINZIOJSONCodec {
-  implicit val isinZioJsonDecoder: JsonDecoder[ISIN] = JsonDecoder[String].mapOrFail(ISIN.parse)
-  implicit val isinZioJsonEncoder: JsonEncoder[ISIN] = JsonEncoder[String].contramap(_.value)
+object IdentZioJson {
+  implicit val isinZioJsonDecoder: JsonDecoder[Isin] = JsonDecoder[String].mapOrFail(Isin.parse)
+  implicit val isinZioJsonEncoder: JsonEncoder[Isin] = JsonEncoder[String].contramap(_.value)
 }

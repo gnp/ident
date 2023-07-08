@@ -16,27 +16,27 @@
 
 package com.gregorpurdy.ident
 
-import zio.json.*
+import io.circe.parser.decode
 import zio.test.Assertion.*
 import zio.test.*
 
-import ISINZIOJSONCodec.*
+import IdentCirce.*
 
-object ISINZIOJSONCodecSpec extends ZIOSpecDefault {
+object IdentCirceSpec extends ZIOSpecDefault {
 
   val isinString = "US0378331005"
   val isinJsonString = s""""$isinString""""
 
-  def spec: Spec[Any, Any] = suite("ISINZIOCodecSpec")(
+  def spec: Spec[Any, Any] = suite("ISINCirceCodecSpec")(
     test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
-      val result = isinJsonString.fromJson[ISIN]
+      val result = decode[Isin](isinJsonString)
 
-      assert(result)(equalTo(Right(ISIN.parse(isinString).toOption.get)))
+      assert(result)(equalTo(Right(Isin.parse(isinString).toOption.get)))
     },
     test("Correctly fail to parse an invalid JSON") {
-      val expected: Either[String, ISIN] =
-        Left("(expected '\"' got '5')")
-      val result = "53".fromJson[ISIN]
+      val expected: Either[String, Isin] =
+        Left("DecodingFailure at : Got value '53' with wrong type, expecting string")
+      val result = decode[Isin]("53").swap.map(_.getMessage).swap
 
       assert(result)(equalTo(expected))
     }

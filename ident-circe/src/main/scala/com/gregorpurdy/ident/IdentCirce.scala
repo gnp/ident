@@ -16,11 +16,15 @@
 
 package com.gregorpurdy.ident
 
-import zio.schema.Schema
+import io.circe.Decoder
+import io.circe.Encoder
 
-object ISINZIOSchema {
+object IdentCirce {
 
-  implicit val isinZioSchema: Schema[ISIN] =
-    Schema.primitive[String].transformOrFail(string => ISIN.parse(string), isin => Right(isin.value))
+  implicit val isinCirceEncoder: Encoder[Isin] =
+    Encoder.encodeString.contramap(_.value)
+
+  implicit val isinCirceDecoder: Decoder[Isin] =
+    Decoder.decodeString.emap(Isin.parse)
 
 }
