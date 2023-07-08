@@ -109,7 +109,7 @@ lazy val root = (project in file("."))
   .aggregate(
     isin,
     isinCirce,
-    isinZio,
+    isinZioJson,
     examples
   )
   .settings(
@@ -121,7 +121,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val examples = (project in file("examples"))
-  .dependsOn(isin, isinCirce, isinZio, isinZioSchema)
+  .dependsOn(isin, isinCirce, isinZioJson, isinZioSchema)
   .settings(
     name := "examples",
     crossScalaVersions := Nil,
@@ -198,7 +198,7 @@ lazy val isinCirce = (project in file("isin-circe"))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
 
-lazy val isinZio = (project in file("isin-zio"))
+lazy val isinZioJson = (project in file("isin-zio-json"))
   .dependsOn(isin)
   .settings(
     name := "isin-zio",
