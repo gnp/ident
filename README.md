@@ -20,6 +20,14 @@ Add this to your `build.sbt`:
 libraryDependencies += "com.gregorpurdy.ident" %% "isin" % "0.1.0"
 ```
 
+for the basic identifier data type, or use one or more of the integrations:
+
+```scala
+libraryDependencies += "com.gregorpurdy.ident" %% "isin-circe" % "0.1.0"
+libraryDependencies += "com.gregorpurdy.ident" %% "isin-zio-json" % "0.1.0"
+libraryDependencies += "com.gregorpurdy.ident" %% "isin-zio-schema" % "0.1.0"
+```
+
 
 ## Example
 
@@ -45,7 +53,12 @@ object ISINTestMain {
 
 ## JSON
 
-You can use the `isin-circe` or `isin-zio` artifacts to get JSON encoders and decoders for ISINs.
+You can use the `isin-circe` or `isin-zio-json` artifacts to get JSON encoders and
+decoders for ISINs.
+
+You can also use the `isin-zio-schema` artifact to get generic ZIO Schema
+support, which includes support for JSON and other formats as well as other
+functionality.
 
 
 ## License
