@@ -1,43 +1,31 @@
-# ISIN
+# Ident
 
-![CI][Badge-CI] [![Sonatype Releases](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fcom%2Fgregorpurdy%2Fident%2Fisin_2.13%2Fmaven-metadata.xml&label=Sonatype%20Release)](https://repo1.maven.org/maven2/com/gregorpurdy/ident/isin_2.13/)
+![CI][Badge-CI] [![Sonatype
+Releases](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fcom%2Fgregorpurdy%2Fident_2.13%2Fmaven-metadata.xml&label=Sonatype%20Release)](https://repo1.maven.org/maven2/com/gregorpurdy/ident/ident_2.13/)
 
-A Scala class for working with validated International Security Identifiers
-(ISINs) as defined in [ISO 6166:2021 Financial services — International
-securities identification number
+The `ident` library contains Scala classes for working with identifiers of
+various types that have been validated to have the correct format:
+
+* [ISIN](https://github.com/gnp/isin-sc/): International Securities
+  Identification Number (ISO 6166:2021)
+
+
+## ISIN
+
+International Security Identifiers (ISINs) as defined in [ISO 6166:2021
+Financial services — International securities identification number
 (ISIN)](https://www.iso.org/standard/78502.html) ("The Standard").
-
-This library is part of the Financial Identifiers series:
-
-* [ISIN](https://github.com/gnp/isin-sc/): International Securities Identification Number (ISO 6166:2021)
-
-
-## Usage
-
-Add this to your `build.sbt`:
-
-```scala
-libraryDependencies += "com.gregorpurdy.ident" %% "isin" % "0.1.0"
-```
-
-for the basic identifier data type, or use one or more of the integrations:
-
-```scala
-libraryDependencies += "com.gregorpurdy.ident" %% "isin-circe" % "0.1.0"
-libraryDependencies += "com.gregorpurdy.ident" %% "isin-zio-json" % "0.1.0"
-libraryDependencies += "com.gregorpurdy.ident" %% "isin-zio-schema" % "0.1.0"
-```
 
 
 ## Example
 
 ```scala
-import com.gregorpurdy.ident.ISIN
+import com.gregorpurdy.ident.Isin
 
-object ISINTestMain {
+object IsinTestMain {
   val isinString = "US0378331005"
   def main(args: Array[String]): Unit = {
-    ISIN.parse(isinString) match {
+    Isin.parse(isinString) match {
       case Right(isin) =>
         println(s"Parsed ISIN: $isin"); // "US0378331005"
         println(s"  Country code: ${isin.countryCode}"); // "US"
@@ -51,10 +39,28 @@ object ISINTestMain {
 ```
 
 
+## Usage
+
+Add this to your `build.sbt`:
+
+```scala
+libraryDependencies += "com.gregorpurdy" %% "ident" % "0.1.0"
+```
+
+for the basic identifier data types, or use one or more of the integrations to
+support various encodings:
+
+```scala
+libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "0.1.0"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "0.1.0"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "0.1.0"
+```
+
+
 ## JSON
 
-You can use the `isin-circe` or `isin-zio-json` artifacts to get JSON encoders and
-decoders for ISINs.
+You can use the `isin-circe` or `isin-zio-json` artifacts to get JSON encoders
+and decoders for ISINs.
 
 You can also use the `isin-zio-schema` artifact to get generic ZIO Schema
 support, which includes support for JSON and other formats as well as other
