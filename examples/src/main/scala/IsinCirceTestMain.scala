@@ -21,7 +21,7 @@ import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
 
-object IsinCirceTestMain {
+object ISINCirceTestMain {
 
   case class Security(isin: ISIN, name: String)
   object Security {

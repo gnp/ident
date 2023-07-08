@@ -20,9 +20,9 @@ import zio.json.*
 import zio.test.Assertion.*
 import zio.test.*
 
-import ISINZIOCodec.*
+import ISINZIOJSONCodec.*
 
-object ISINZIOCodecSpec extends ZIOSpecDefault {
+object ISINZIOJSONCodecSpec extends ZIOSpecDefault {
 
   val isinString = "US0378331005"
   val isinJsonString = s""""$isinString""""

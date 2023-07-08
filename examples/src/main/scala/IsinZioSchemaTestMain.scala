@@ -15,13 +15,13 @@
  */
 
 import com.gregorpurdy.ident.ISIN
-import com.gregorpurdy.ident.IsinZioSchema._
+import com.gregorpurdy.ident.ISINZIOSchema._
 import zio._
 import zio.schema.DeriveSchema
 import zio.schema.Schema
 import zio.schema.codec.JsonCodec._
 
-object IsinZioSchemaTestMain extends ZIOAppDefault {
+object ISINZIOSchemaTestMain extends ZIOAppDefault {
 
   case class Security(isin: ISIN, name: String)
   object Security {

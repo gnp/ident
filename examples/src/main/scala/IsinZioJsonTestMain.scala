@@ -15,10 +15,10 @@
  */
 
 import com.gregorpurdy.ident.ISIN
-import com.gregorpurdy.ident.ISINZIOCodec._
+import com.gregorpurdy.ident.ISINZIOJSONCodec._
 import zio.json._
 
-object IsinZioJsonTestMain {
+object ISINZIOJSONTestMain {
 
   case class Security(isin: ISIN, name: String)
   object Security {

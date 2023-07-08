@@ -2,9 +2,9 @@ package com.gregorpurdy.ident
 
 import zio.schema.Schema
 
-object IsinZioSchema {
+object ISINZIOSchema {
 
-  implicit val isinSchema: Schema[ISIN] =
+  implicit val isinZioSchema: Schema[ISIN] =
     Schema.primitive[String].transformOrFail(string => ISIN.parse(string), isin => Right(isin.value))
 
 }
