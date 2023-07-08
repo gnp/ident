@@ -42,6 +42,11 @@ addCommandAlias(
   "; headerCheck; scalafmtSbtCheck; scalafmtCheckAll; scalafixAll --check"
 )
 
+addCommandAlias(
+  "generateReadme",
+  "; project docs; set mdocIn := file(\"docs/index.md\"); set mdocOut := file(\"README.md\"); doc / mdoc"
+)
+
 val stdCompilerOptions2 = Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -120,6 +125,16 @@ lazy val root = (project in file("."))
     publish / skip := true,
     publishLocal := {}
   )
+
+lazy val docs = project
+  .in(file("ident-docs"))
+  .settings(
+    mdocVariables := Map(
+      "VERSION" -> version.value
+    )
+  )
+  .dependsOn(root)
+  .enablePlugins(MdocPlugin)
 
 lazy val examples = (project in file("examples"))
   .dependsOn(ident, identCirce, identZioJson, identZioSchema)
