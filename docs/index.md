@@ -25,24 +25,22 @@ Financial services — International securities identification number
 (ISIN)](https://www.iso.org/standard/78502.html) ("The Standard").
 
 
-## Example
+### Example
 
-```scala
+```scala mdoc:invisible
 import com.gregorpurdy.ident.Isin
+```
 
-object IsinTestMain {
-  val isinString = "US0378331005"
-  def main(args: Array[String]): Unit = {
-    Isin.parse(isinString) match {
-      case Right(isin) =>
-        println(s"Parsed ISIN: $isin"); // "US0378331005"
-        println(s"  Country code: ${isin.countryCode}"); // "US"
-        println(s"  Security identifier: ${isin.securityIdentifier}"); // "037833100"
-        println(s"  Check digit: ${isin.checkDigit}"); // '5'
-      case Left(err) =>
-        throw new RuntimeException(s"Unable to parse ISIN $isinString: $err")
-    }
-  }
+```scala mdoc
+val input = "US0378331005"
+Isin.fromString(input) match {
+  case Right(isin) =>
+    println(s"Parsed ISIN: $isin")
+    println(s"  Country code: ${isin.countryCode}")
+    println(s"  Security identifier: ${isin.securityIdentifier}")
+    println(s"  Check digit: ${isin.checkDigit}")
+  case Left(err) =>
+    throw new RuntimeException(s"Unable to parse ISIN $input: $err")
 }
 ```
 
