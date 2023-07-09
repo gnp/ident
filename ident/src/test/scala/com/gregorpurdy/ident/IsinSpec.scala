@@ -16,6 +16,7 @@
 
 package com.gregorpurdy.ident
 
+import zio.Chunk
 import zio.test.Assertion.*
 import zio.test.*
 
@@ -80,6 +81,13 @@ object IsinSpec extends ZIOSpecDefault {
     },
     test("Correctly parse and validate a real-world ISIN with a '9' check digit (SUPN aka Supernus Pharmaceuticals)") {
       assert(Isin.fromString("US8684591089").toOption.get.toString)(equalTo("US8684591089"))
+    },
+    test("Correctly support default Ordering") {
+      val bcc = Isin.fromString("US09739D1000").toOption.get
+      val intc = Isin.fromString("US4581401001").toOption.get
+      val chunk = Chunk(intc, bcc)
+      val sorted = chunk.sorted
+      assert(sorted)(equalTo(Chunk(bcc, intc)))
     }
   )
 

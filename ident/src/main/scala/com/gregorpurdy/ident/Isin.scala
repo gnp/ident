@@ -37,6 +37,8 @@ final case class Isin private (value: String) {
 
 object Isin {
 
+  implicit val ord: Ordering[Isin] = Ordering.by(unapply)
+
   val countryCodeFormat: Regex = "[A-Z]{2}".r
   val securityIdentifierFormat: Regex = "[A-Z0-9]{9}".r
   val checkDigitFormat: Regex = "[0-9]".r
