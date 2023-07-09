@@ -133,7 +133,7 @@ lazy val docs = project
       "VERSION" -> version.value
     )
   )
-  .dependsOn(root)
+  .dependsOn(ident)
   .enablePlugins(MdocPlugin)
 
 lazy val examples = (project in file("examples"))
