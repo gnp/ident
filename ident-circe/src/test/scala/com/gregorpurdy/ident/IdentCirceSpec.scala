@@ -27,7 +27,7 @@ object IdentCirceSpec extends ZIOSpecDefault {
   val isinString = "US0378331005"
   val isinJsonString = s""""$isinString""""
 
-  def spec: Spec[Any, Any] = suite("ISINCirceCodecSpec")(
+  def spec: Spec[Any, Any] = suite("IdentCirceSpec")(
     test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
       val result = decode[Isin](isinJsonString)
 
