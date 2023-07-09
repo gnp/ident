@@ -6,8 +6,16 @@ Releases](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo
 The `ident` library contains Scala classes for working with identifiers of
 various types that have been validated to have the correct format:
 
+* CIK: SEC / EDGAR Central Index Key (CIK) number
+
 * [ISIN](https://github.com/gnp/isin-sc/): International Securities
   Identification Number (ISO 6166:2021)
+
+
+## CIK
+
+An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical identifier
+associated with every entity that files with the SEC.
 
 
 ## ISIN
