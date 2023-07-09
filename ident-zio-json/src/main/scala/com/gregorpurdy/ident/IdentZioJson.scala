@@ -19,6 +19,11 @@ package com.gregorpurdy.ident
 import zio.json.*
 
 object IdentZioJson {
+
+  implicit val cikZioJsonDecoder: JsonDecoder[Cik] =
+    JsonDecoder[Long].mapOrFail(Cik.fromLong).orElse(JsonDecoder[String].mapOrFail(Cik.fromString))
+  implicit val cikZioJsonEncoder: JsonEncoder[Cik] = JsonEncoder[Long].contramap(_.value)
+
   implicit val isinZioJsonDecoder: JsonDecoder[Isin] = JsonDecoder[String].mapOrFail(Isin.fromString)
   implicit val isinZioJsonEncoder: JsonEncoder[Isin] = JsonEncoder[String].contramap(_.value)
 

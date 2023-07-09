@@ -20,6 +20,13 @@ import zio.schema.Schema
 
 object IdentZioSchema {
 
+  implicit val cikZioSchemaLong: Schema[Cik] =
+    Schema.primitive[Long].transformOrFail(value => Cik.fromLong(value), cik => Right(cik.value))
+
+  // FIXME: How to combine cikZioSchemaLong and cikZioSchemaString into fallback so we can flexibly accept Long or String input for decode?
+  // implicit val cikZioSchemaString: Schema[Cik] =
+  //   Schema.primitive[String].transformOrFail(value => Cik.fromString(value), cik => Right(cik.value.toString))
+
   implicit val isinZioSchema: Schema[Isin] =
     Schema.primitive[String].transformOrFail(string => Isin.fromString(string), isin => Right(isin.value))
 

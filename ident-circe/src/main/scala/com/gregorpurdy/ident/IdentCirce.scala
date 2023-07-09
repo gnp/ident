@@ -21,6 +21,9 @@ import io.circe.Encoder
 
 object IdentCirce {
 
+  implicit val cikCirceEncoder: Encoder[Cik] = Encoder.encodeLong.contramap(_.value)
+  implicit val cikCirceDecoder: Decoder[Cik] =
+    Decoder.decodeLong.emap(Cik.fromLong).or(Decoder.decodeString.emap(Cik.fromString))
 
   implicit val isinCirceEncoder: Encoder[Isin] = Encoder.encodeString.contramap(_.value)
   implicit val isinCirceDecoder: Decoder[Isin] = Decoder.decodeString.emap(Isin.fromString)
