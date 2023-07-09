@@ -188,7 +188,7 @@ object Isin {
     }
   }
 
-  def parse(value: String): Either[String, Isin] = {
+  def fromString(value: String): Either[String, Isin] = {
     val temp = normalize(value)
 
     temp match {
