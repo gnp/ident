@@ -88,6 +88,12 @@ object IsinSpec extends ZIOSpecDefault {
       val chunk = Chunk(intc, bcc)
       val sorted = chunk.sorted
       assert(sorted)(equalTo(Chunk(bcc, intc)))
+    },
+    test("Correctly support pattern matching") {
+      val bcc = Isin.fromString("US09739D1000").toOption.get
+      val intc = Isin.fromString("US4581401001").toOption.get
+      val chunk = Chunk(intc, bcc).map { case Isin(v) => v }
+      assert(chunk)(equalTo(Chunk("US4581401001", "US09739D1000")))
     }
   )
 
