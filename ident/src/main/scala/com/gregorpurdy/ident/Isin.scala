@@ -42,8 +42,6 @@ object Isin {
   val checkDigitFormat: Regex = "[0-9]".r
   val isinFormat: Regex = "([A-Z]{2})([A-Z0-9]{9})([0-9])".r
 
-  private def normalize(s: String) = s.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
   /** Calculate the Check Digit for a given Country Code and Security Identifier.
     *
     * @param countryCode
