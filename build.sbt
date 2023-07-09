@@ -130,7 +130,7 @@ lazy val docs = project
   .in(file("ident-docs"))
   .settings(
     mdocVariables := Map(
-      "VERSION" -> version.value
+      "VERSION" -> version.value.replaceAll("-SNAPSHOT$", "")
     )
   )
   .dependsOn(ident)

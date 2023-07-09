@@ -52,16 +52,16 @@ object IsinTestMain {
 Add this to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.gregorpurdy" %% "ident" % "0.1.1"
+libraryDependencies += "com.gregorpurdy" %% "ident" % "0.2.0"
 ```
 
 for the basic identifier data types, or use one or more of the integrations to
 support various encodings:
 
 ```scala
-libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "0.1.1"
-libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "0.1.1"
-libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "0.1.1"
+libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "0.2.0"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "0.2.0"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "0.2.0"
 ```
 
 
