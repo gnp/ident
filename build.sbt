@@ -6,7 +6,7 @@ val Scala3Version = "3.3.0"
 ThisBuild / scalaVersion := Scala2Version // For JDK 16 compatibility
 
 ThisBuild / organization := "com.gregorpurdy"
-ThisBuild / version := "0.1.1"
+ThisBuild / version := "0.2.0-SNAPSHOT"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / organizationName := "Gregor Purdy"
 ThisBuild / organizationHomepage := Some(url("https://github.com/gnp"))
