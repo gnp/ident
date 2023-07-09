@@ -21,6 +21,6 @@ import zio.schema.Schema
 object IdentZioSchema {
 
   implicit val isinZioSchema: Schema[Isin] =
-    Schema.primitive[String].transformOrFail(string => Isin.parse(string), isin => Right(isin.value))
+    Schema.primitive[String].transformOrFail(string => Isin.fromString(string), isin => Right(isin.value))
 
 }

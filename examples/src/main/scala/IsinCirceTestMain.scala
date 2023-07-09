@@ -38,7 +38,7 @@ object IsinCirceTestMain {
     println()
     println("ISIN Circe Test Main:")
 
-    val isin = Isin.parse("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
+    val isin = Isin.fromString("US0378331005").getOrElse(throw new RuntimeException("Could not parse ISIN"))
     val inSecurity = Security(isin, "Apple Inc.")
 
     println()

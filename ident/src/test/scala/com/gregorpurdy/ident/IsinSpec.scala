@@ -28,7 +28,7 @@ object IsinSpec extends ZIOSpecDefault {
 
   def spec: Spec[Any, Any] = suite("IsinSpec")(
     test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
-      val isin = Isin.parse(isinString).toOption.get
+      val isin = Isin.fromString(isinString).toOption.get
 
       assert(isin.value)(equalTo(isinString))
       assert(isin.countryCode)(equalTo(countryCode))
@@ -36,7 +36,7 @@ object IsinSpec extends ZIOSpecDefault {
       assert(isin.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly compute the check digit for AAPL from the isin.org web site") {
-      val isin = Isin.make(countryCode, securityIdentifier).toOption.get
+      val isin = Isin.fromPartsCalcCheckDigit(countryCode, securityIdentifier).toOption.get
 
       assert(isin.value)(equalTo(isinString))
       assert(isin.countryCode)(equalTo(countryCode))
@@ -44,7 +44,7 @@ object IsinSpec extends ZIOSpecDefault {
       assert(isin.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly validate the check digit for AAPL from the isin.org web site") {
-      val isin = Isin.make(countryCode, securityIdentifier, checkDigit).toOption.get
+      val isin = Isin.fromParts(countryCode, securityIdentifier, checkDigit).toOption.get
 
       assert(isin.value)(equalTo(isinString))
       assert(isin.countryCode)(equalTo(countryCode))
@@ -52,34 +52,34 @@ object IsinSpec extends ZIOSpecDefault {
       assert(isin.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly parse and validate a real-world ISIN with a '0' check digit (BCC aka Boise Cascade)") {
-      assert(Isin.parse("US09739D1000").toOption.get.toString)(equalTo("US09739D1000"))
+      assert(Isin.fromString("US09739D1000").toOption.get.toString)(equalTo("US09739D1000"))
     },
     test("Correctly parse and validate a real-world ISIN with a '1' check digit (INTC aka Intel)") {
-      assert(Isin.parse("US4581401001").toOption.get.toString)(equalTo("US4581401001"))
+      assert(Isin.fromString("US4581401001").toOption.get.toString)(equalTo("US4581401001"))
     },
     test("Correctly parse and validate a real-world ISIN with a '2' check digit (XRX aka Xerox)") {
-      assert(Isin.parse("US98421M1062").toOption.get.toString)(equalTo("US98421M1062"))
+      assert(Isin.fromString("US98421M1062").toOption.get.toString)(equalTo("US98421M1062"))
     },
     test("Correctly parse and validate a real-world ISIN with a '3' check digit (AAL aka American Airlines)") {
-      assert(Isin.parse("US02376R1023").toOption.get.toString)(equalTo("US02376R1023"))
+      assert(Isin.fromString("US02376R1023").toOption.get.toString)(equalTo("US02376R1023"))
     },
     test("Correctly parse and validate a real-world ISIN with a '4' check digit (VNDA aka Vanda Pharmaceuticals)") {
-      assert(Isin.parse("US9216591084").toOption.get.toString)(equalTo("US9216591084"))
+      assert(Isin.fromString("US9216591084").toOption.get.toString)(equalTo("US9216591084"))
     },
     test("Correctly parse and validate a real-world ISIN with a '5' check digit (APT aka AlphaProTec)") {
-      assert(Isin.parse("US0207721095").toOption.get.toString)(equalTo("US0207721095"))
+      assert(Isin.fromString("US0207721095").toOption.get.toString)(equalTo("US0207721095"))
     },
     test("Correctly parse and validate a real-world ISIN with a '6' check digit (PRDO aka Perdoceo Education)") {
-      assert(Isin.parse("US71363P1066").toOption.get.toString)(equalTo("US71363P1066"))
+      assert(Isin.fromString("US71363P1066").toOption.get.toString)(equalTo("US71363P1066"))
     },
     test("Correctly parse and validate a real-world ISIN with a '7' check digit (MEI aka Methode Electronics)") {
-      assert(Isin.parse("US5915202007").toOption.get.toString)(equalTo("US5915202007"))
+      assert(Isin.fromString("US5915202007").toOption.get.toString)(equalTo("US5915202007"))
     },
     test("Correctly parse and validate a real-world ISIN with a '8' check digit (IMKTA aka Ingles Markets)") {
-      assert(Isin.parse("US4570301048").toOption.get.toString)(equalTo("US4570301048"))
+      assert(Isin.fromString("US4570301048").toOption.get.toString)(equalTo("US4570301048"))
     },
     test("Correctly parse and validate a real-world ISIN with a '9' check digit (SUPN aka Supernus Pharmaceuticals)") {
-      assert(Isin.parse("US8684591089").toOption.get.toString)(equalTo("US8684591089"))
+      assert(Isin.fromString("US8684591089").toOption.get.toString)(equalTo("US8684591089"))
     }
   )
 

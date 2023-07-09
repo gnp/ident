@@ -31,7 +31,7 @@ object IdentZioJsonSpec extends ZIOSpecDefault {
     test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
       val result = isinJsonString.fromJson[Isin]
 
-      assert(result)(equalTo(Right(Isin.parse(isinString).toOption.get)))
+      assert(result)(equalTo(Right(Isin.fromString(isinString).toOption.get)))
     },
     test("Correctly fail to parse an invalid JSON") {
       val expected: Either[String, Isin] =

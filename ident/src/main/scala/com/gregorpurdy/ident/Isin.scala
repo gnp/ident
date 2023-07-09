@@ -144,7 +144,7 @@ object Isin {
   def isValidIsinFormatLoose(string: String): Boolean =
     isinFormat.matches(normalize(string))
 
-  def make(
+  def fromParts(
       countryCode: String,
       securityIdentifier: String,
       checkDigit: String
@@ -173,7 +173,7 @@ object Isin {
 
   /** Create an ISIN from a country code and security identifier, computing the correct check digit automatically.
     */
-  def make(countryCode: String, securityIdentifier: String): Either[String, Isin] = {
+  def fromPartsCalcCheckDigit(countryCode: String, securityIdentifier: String): Either[String, Isin] = {
     val cc = normalize(countryCode)
     val id = normalize(securityIdentifier)
 
@@ -193,7 +193,7 @@ object Isin {
 
     temp match {
       case isinFormat(countryCode, securityIdentifier, checkDigit) =>
-        make(countryCode, securityIdentifier, checkDigit)
+        fromParts(countryCode, securityIdentifier, checkDigit)
       case _ =>
         Left(s"Input string is not in valid ISIN format: '$value'")
     }

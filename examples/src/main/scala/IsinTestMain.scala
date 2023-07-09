@@ -19,7 +19,7 @@ import com.gregorpurdy.ident.Isin
 object IsinTestMain {
   val isinString = "US0378331005"
   def main(args: Array[String]): Unit = {
-    Isin.parse(isinString) match {
+    Isin.fromString(isinString) match {
       case Right(isin) =>
         println(s"Parsed ISIN: $isin"); // "US0378331005"
         println(s"  Country code: ${isin.countryCode}"); // "US"

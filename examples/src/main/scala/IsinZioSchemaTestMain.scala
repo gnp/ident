@@ -31,7 +31,7 @@ object IsinZioSchemaTestMain extends ZIOAppDefault {
   def run: ZIO[Any, Any, Unit] = for {
     _ <- Console.printLine("")
     _ <- Console.printLine("ISIN ZIO Schema Test Main:")
-    isin <- ZIO.fromEither(Isin.parse("US0378331005"))
+    isin <- ZIO.fromEither(Isin.fromString("US0378331005"))
     inSecurity = Security(isin, "Apple Inc.")
     outJson = jsonCodec(Security.schema).encodeJson(inSecurity, None)
     _ <- Console.printLine(s"Encoded JSON: $outJson")
