@@ -28,7 +28,7 @@ import scala.util.matching.Regex
   * @see
   *   https://en.wikipedia.org/wiki/International_Securities_Identification_Number
   */
-case class Isin private (value: String) {
+final case class Isin private (value: String) {
   def countryCode: String = value.substring(0, 2)
   def securityIdentifier: String = value.substring(2, 11)
   def checkDigit: String = value.substring(11, 12)
