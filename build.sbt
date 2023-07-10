@@ -6,7 +6,7 @@ val Scala3Version = "3.3.0"
 ThisBuild / scalaVersion := Scala2Version // For JDK 16 compatibility
 
 ThisBuild / organization := "com.gregorpurdy"
-ThisBuild / version := "0.2.0"
+ThisBuild / version := "0.2.1-SNAPSHOT"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / organizationName := "Gregor Purdy"
 ThisBuild / organizationHomepage := Some(url("https://github.com/gnp"))
@@ -114,6 +114,7 @@ lazy val root = (project in file("."))
   .aggregate(
     ident,
     identCirce,
+    identZioConfig,
     identZioJson,
     identZioSchema,
     examples
@@ -137,7 +138,7 @@ lazy val docs = project
   .enablePlugins(MdocPlugin)
 
 lazy val examples = (project in file("examples"))
-  .dependsOn(ident, identCirce, identZioJson, identZioSchema)
+  .dependsOn(ident, identCirce, identZioConfig, identZioJson, identZioSchema)
   .settings(
     name := "examples",
     crossScalaVersions := Nil,
@@ -203,6 +204,35 @@ lazy val identCirce = (project in file("ident-circe"))
       Log4JOverSlf4J % Compile,
       JulToSlf4J % Compile,
       CirceParser % Test,
+      Logback % Test,
+      ZioTest % Test,
+      ZioTestMagnolia % Test,
+      ZioTestSbt % Test
+    )
+      .map(_.exclude("commons-logging", "commons-logging"))
+      .map(_.exclude("log4j", "log4j"))
+      .map(_.exclude("org.slf4j", "slf4j-log4j12")),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+  )
+
+lazy val identZioConfig = (project in file("ident-zio-config"))
+  .dependsOn(ident)
+  .settings(
+    name := "ident-zio-config",
+    crossScalaVersions := Seq(Scala2Version, Scala3Version),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) => stdCompilerOptions2
+        case _            => stdCompilerOptions3
+      }
+    },
+    libraryDependencies ++= Seq(
+      ZioConfig % Compile,
+      ZioConfigMagnolia % Compile,
+      Slf4JApi % Compile,
+      JclOverSlf4J % Compile,
+      Log4JOverSlf4J % Compile,
+      JulToSlf4J % Compile,
       Logback % Test,
       ZioTest % Test,
       ZioTestMagnolia % Test,
