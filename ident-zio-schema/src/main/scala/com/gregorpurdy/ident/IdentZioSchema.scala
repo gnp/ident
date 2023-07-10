@@ -23,6 +23,9 @@ object IdentZioSchema {
   implicit val cikZioSchemaLong: Schema[Cik] =
     Schema.primitive[Long].transformOrFail(value => Cik.fromLong(value), cik => Right(cik.value))
 
+  implicit val cusipZioSchema: Schema[Cusip] =
+    Schema.primitive[String].transformOrFail(string => Cusip.fromString(string), cusip => Right(cusip.value))
+
   // FIXME: How to combine cikZioSchemaLong and cikZioSchemaString into fallback so we can flexibly accept Long or String input for decode?
   // implicit val cikZioSchemaString: Schema[Cik] =
   //   Schema.primitive[String].transformOrFail(value => Cik.fromString(value), cik => Right(cik.value.toString))
