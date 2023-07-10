@@ -190,15 +190,12 @@ object Isin {
     }
   }
 
-  def fromString(value: String): Either[String, Isin] = {
-    val temp = normalize(value)
-
-    temp match {
+  def fromString(value: String): Either[String, Isin] =
+    normalize(value) match {
       case isinFormat(countryCode, securityIdentifier, checkDigit) =>
         fromParts(countryCode, securityIdentifier, checkDigit)
       case _ =>
         Left(s"Input string is not in valid ISIN format: '$value'")
     }
-  }
 
 }
