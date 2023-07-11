@@ -39,7 +39,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 addCommandAlias(
   "check",
-  "; headerCheck; scalafmtSbtCheck; scalafmtCheckAll; scalafixAll --check"
+  "; headerCheck; scalafmtSbtCheck; scalafmtCheckAll; scalafixAll --check; doc"
 )
 
 addCommandAlias(
