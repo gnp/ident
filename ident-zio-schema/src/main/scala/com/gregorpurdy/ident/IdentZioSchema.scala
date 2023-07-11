@@ -33,4 +33,7 @@ object IdentZioSchema {
   implicit val isinZioSchema: Schema[Isin] =
     Schema.primitive[String].transformOrFail(string => Isin.fromString(string), isin => Right(isin.value))
 
+  implicit val leiZioSchema: Schema[Lei] =
+    Schema.primitive[String].transformOrFail(string => Lei.fromString(string), ident => Right(ident.value))
+
 }
