@@ -39,7 +39,7 @@ import scala.util.matching.Regex
   *   ISO 17442-1:2020 "Financial services — Legal entity identifier (LEI) — Part 1: Assignment"
   *   (https://www.iso.org/standard/78829.html)
   */
-sealed case class Lei(value: String) {
+final case class Lei private (value: String) {
 
   /** @return true if the LEI does not conform to the standard (with expected check digits), or false otherwise */
   def isConforming: Boolean = checkDigits == "%02d".format(Lei.compute_check_digits(value.substring(0, 18) + "00"))
