@@ -41,7 +41,7 @@ import scala.util.matching.Regex
   */
 sealed case class Lei(value: String) {
 
-  /** @returns true if the LEI does not conform to the standard (with expected check digits), or false otherwise */
+  /** @return true if the LEI does not conform to the standard (with expected check digits), or false otherwise */
   def isConforming: Boolean = checkDigits == "%02d".format(Lei.compute_check_digits(value.substring(0, 18) + "00"))
 
   /** "Prefix used to ensure the uniqueness among codes from LEI issuers (Local Operating Units or LOUs)."
@@ -376,7 +376,7 @@ object Lei {
       * Note: Calling this method implicitly initializes the whitelist data structures, if they have not already been
       * initialized.
       *
-      * @returns
+      * @return
       *   true if `value` is present in the whitelist, false otherwise.
       */
     def contains(value: String) = lookup.contains(value)
