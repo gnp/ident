@@ -28,6 +28,9 @@ object IdentCirce {
   implicit val cusipCirceEncoder: Encoder[Cusip] = Encoder.encodeString.contramap(_.value)
   implicit val cusipCirceDecoder: Decoder[Cusip] = Decoder.decodeString.emap(Cusip.fromString)
 
+  implicit val figiCirceEncoder: Encoder[Figi] = Encoder.encodeString.contramap(_.value)
+  implicit val figiCirceDecoder: Decoder[Figi] = Decoder.decodeString.emap(Figi.fromString)
+
   implicit val isinCirceEncoder: Encoder[Isin] = Encoder.encodeString.contramap(_.value)
   implicit val isinCirceDecoder: Decoder[Isin] = Decoder.decodeString.emap(Isin.fromString)
 
