@@ -204,15 +204,12 @@ object Figi {
     }
   }
 
-  def fromString(value: String): Either[String, Figi] = {
-    val temp = value.trim.toUpperCase
-
-    temp match {
+  def fromString(value: String): Either[String, Figi] =
+    normalize(value) match {
       case figiFormat(provider, scope, id, checkDigit) =>
         fromParts(provider, scope, id, checkDigit)
       case _ =>
         Left(s"Input string is not in valid FIGI format: '$value'")
     }
-  }
 
 }
