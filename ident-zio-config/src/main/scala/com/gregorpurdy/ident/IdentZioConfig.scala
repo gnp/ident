@@ -35,4 +35,7 @@ object IdentZioConfig {
   implicit val leiConfig: Config[Lei] =
     Config.string.mapOrFail[Lei](s => Lei.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
 
+  implicit val micConfig: Config[Mic] =
+    Config.string.mapOrFail[Mic](s => Mic.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+
 }
