@@ -18,6 +18,12 @@ package com.gregorpurdy.ident
 
 import scala.util.matching.Regex
 
+/** @see
+  *   https://en.wikipedia.org/wiki/CUSIP
+  *
+  * @see
+  *   https://www.cusip.com/identifiers.html?section=CUSIP
+  */
 final case class Cusip private (value: String) {
   def base: String = value.substring(0, 6)
   def issue: String = value.substring(6, 8)
