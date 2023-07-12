@@ -18,11 +18,36 @@ An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical identifier
 associated with every entity that files with the SEC.
 
 
+## CUSIP
+
+An identifier from [Committee on Uniform Security Identification
+Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP) for
+North American securities identification.
+
+
+## FIGI
+
+A [Financial Instrument Global Identifier](https://www.openfigi.com/about/figi)
+(FIGI).
+
+
 ## ISIN
 
 International Security Identifiers (ISINs) as defined in [ISO 6166:2021
 Financial services — International securities identification number
 (ISIN)](https://www.iso.org/standard/78502.html) ("The Standard").
+
+
+## LEI
+
+An ISO standard (ISO 17442-1:2020(E)) [Legal Entity
+Identifier](https://www.gleif.org/en/about-lei/introducing-the-legal-entity-identifier-lei)
+(LEI).
+
+
+## MIC
+
+A (Financial) [Market Identifier Code](https://en.wikipedia.org/wiki/Market_Identifier_Code) (MIC).
 
 
 ### Example
@@ -52,16 +77,16 @@ Isin.fromString(input) match {
 Add this to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.gregorpurdy" %% "ident" % "0.2.0"
+libraryDependencies += "com.gregorpurdy" %% "ident" % "0.2.1"
 ```
 
 for the basic identifier data types, or use one or more of the integrations to
 support various encodings:
 
 ```scala
-libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "0.2.0"
-libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "0.2.0"
-libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "0.2.0"
+libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "0.2.1"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "0.2.1"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "0.2.1"
 ```
 
 
