@@ -21,22 +21,22 @@ import zio.schema.Schema
 object IdentZioSchema {
 
   implicit val cikZioSchemaLong: Schema[Cik] =
-    Schema.primitive[Long].transformOrFail(value => Cik.fromLong(value), cik => Right(cik.value))
+    Schema.primitive[Long].transformOrFail(value => Cik.fromLong(value), ident => Right(ident.value))
 
   // FIXME: How to combine cikZioSchemaLong and cikZioSchemaString into fallback so we can flexibly accept Long or String input for decode?
   // implicit val cikZioSchemaString: Schema[Cik] =
-  //   Schema.primitive[String].transformOrFail(value => Cik.fromString(value), cik => Right(cik.value.toString))
+  //   Schema.primitive[String].transformOrFail(value => Cik.fromString(value), ident => Right(ident.value.toString))
 
   implicit val cusipZioSchema: Schema[Cusip] =
-    Schema.primitive[String].transformOrFail(string => Cusip.fromString(string), cusip => Right(cusip.value))
+    Schema.primitive[String].transformOrFail(value => Cusip.fromString(value), ident => Right(ident.value))
 
   implicit val figiZioSchema: Schema[Figi] =
-    Schema.primitive[String].transformOrFail(string => Figi.fromString(string), ident => Right(ident.value))
+    Schema.primitive[String].transformOrFail(value => Figi.fromString(value), ident => Right(ident.value))
 
   implicit val isinZioSchema: Schema[Isin] =
-    Schema.primitive[String].transformOrFail(string => Isin.fromString(string), isin => Right(isin.value))
+    Schema.primitive[String].transformOrFail(value => Isin.fromString(value), ident => Right(ident.value))
 
   implicit val leiZioSchema: Schema[Lei] =
-    Schema.primitive[String].transformOrFail(string => Lei.fromString(string), ident => Right(ident.value))
+    Schema.primitive[String].transformOrFail(value => Lei.fromString(value), ident => Right(ident.value))
 
 }
