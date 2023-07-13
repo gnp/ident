@@ -261,7 +261,6 @@ lazy val identZioJson = (project in file("ident-zio-json"))
       JclOverSlf4J % Compile,
       Log4JOverSlf4J % Compile,
       JulToSlf4J % Compile,
-      CirceParser % Test,
       Logback % Test,
       ZioTest % Test,
       ZioTestMagnolia % Test,
