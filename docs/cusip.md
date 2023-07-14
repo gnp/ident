@@ -38,7 +38,7 @@ Standard. In addition, there are provisions for privately assigned identifiers
 
 ## Usage
 
-Use `Cusip.fromString()` to convert a string to a validated CUSIP:
+Use `Cusip.fromString` to convert a string to a validated CUSIP:
 
 ```scala mdoc
 Cusip.fromString("09739D100") match {
@@ -48,8 +48,8 @@ Cusip.fromString("09739D100") match {
 ```
 
 If you just want to check if a string value is in a valid CUSIP format (with the
-correct _Check Digit_), use `isValid()` (which pre-normalizes the input before
-checking) or `isValidStrict()` (which requires an already normalized String as
+correct _Check Digit_), use `isValid` (which pre-normalizes the input before
+checking) or `isValidStrict` (which requires an already normalized String as
 input).
 
 
@@ -77,7 +77,7 @@ private _Issue Numbers_.
 
 You can determine whether or not a CUSIP is intended for private use by using
 the `isPrivateUse` method. A private use CUSIP is one that either
-`hasPrivateIssuer` or `isPrivateIssue`. The has/is distinction is because a
+`hasPrivateIssuer` or `hasPrivateIssue`. The has/is distinction is because a
 CUSIP represents ("is") an Issue (Security) offered by an "Issuer" (the Security
 "has" an Issuer).
 
@@ -127,7 +127,7 @@ identifiers for non-North American securities.
 A CUSIP with a letter in the first position is a CINS number, and that letter
 identifies the country or geographic region of the _Issuer_.
 
-Use the `isCins()` method to discriminate between CINS and conventional CUSIPs,
+Use the `isCins` method to discriminate between CINS and conventional CUSIPs,
 and the `cinsCountryCode` method to extract the CINS Country Code as an
 `Option[Char]`.
 
@@ -144,10 +144,10 @@ The country codes are:
 |`G` |United Kingdom|`N` |Netherlands|`U` |United States|    |               |
 
 Even though country codes `I`, `O` and `Z` are unused, this class reports CUSIPs
-starting with those letters as being in the CINS format via `isCins()` and
-returns them via `cinsCountryCode()` because The Standard says CINS numbers are
+starting with those letters as being in the CINS format via `isCins` and
+returns them via `cinsCountryCode` because The Standard says CINS numbers are
 those CUSIPs starting with a letter. If you care about the distinction between
-the two, use `isCinsBase()` and `isCinsExtended()`.
+the two, use `isCinsBase` and `isCinsExtended`.
 
 See section C.7.2 "Non-North American Issues -- CUSIP International Numbering
 System" of The Standard.
