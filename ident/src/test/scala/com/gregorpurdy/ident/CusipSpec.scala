@@ -7,8 +7,8 @@ import zio.test.*
 object CusipSpec extends ZIOSpecDefault {
 
   val cusipString = "037833100"
-  val base = "037833"
-  val issue = "10"
+  val issuerNumber = "037833"
+  val issueNumber = "10"
   val checkDigit = "0"
 
   def spec: Spec[Any, Any] = suite("CusipSpec")(
@@ -18,24 +18,35 @@ object CusipSpec extends ZIOSpecDefault {
       val cusip = Cusip.fromString(cusipString).toOption.get
 
       assert(cusip.value)(equalTo(cusipString))
-      assert(cusip.base)(equalTo(base))
-      assert(cusip.issue)(equalTo(issue))
+      assert(cusip.issuerNumber)(equalTo(issuerNumber))
+      assert(cusip.issueNumber)(equalTo(issueNumber))
       assert(cusip.checkDigit)(equalTo(checkDigit))
+      assert(cusip.payload)(equalTo(s"$issuerNumber$issueNumber"))
+
+      assert(cusip.isCins)(isFalse)
+      assert(cusip.isCinsBase)(isFalse)
+      assert(cusip.isCinsExtended)(isFalse)
+      assert(cusip.cinsCountryCode)(isNone)
+
+      assert(cusip.hasPrivateIssuer)(isFalse)
+      assert(cusip.hasPrivateIssue)(isFalse)
+      assert(cusip.isPrivateUse)(isFalse)
+
+      assert(cusip.toString)(equalTo(cusipString))
+      assert(cusip.toStringTagged)(equalTo(s"cusip:$cusipString"))
     },
     test("Correctly compute the check digit for the AAPL CUSIP") {
-      val cusip = Cusip.fromPartsCalcCheckDigit(base, issue).toOption.get
+      val cusip = Cusip.fromPartsCalcCheckDigit(issuerNumber, issueNumber).toOption.get
 
       assert(cusip.value)(equalTo(cusipString))
-      assert(cusip.base)(equalTo(base))
-      assert(cusip.issue)(equalTo(issue))
       assert(cusip.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly validate the check digit for AAPL from the isin.org web site") {
-      val cusip = Cusip.fromParts(base, issue, checkDigit).toOption.get
+      val cusip = Cusip.fromParts(issuerNumber, issueNumber, checkDigit).toOption.get
 
       assert(cusip.value)(equalTo(cusipString))
-      assert(cusip.base)(equalTo(base))
-      assert(cusip.issue)(equalTo(issue))
+      assert(cusip.issuerNumber)(equalTo(issuerNumber))
+      assert(cusip.issueNumber)(equalTo(issueNumber))
       assert(cusip.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly parse and validate a real-world CUSIP with a '0' check digit (BCC aka Boise Cascade)") {

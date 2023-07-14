@@ -18,18 +18,148 @@ package com.gregorpurdy.ident
 
 import scala.util.matching.Regex
 
-/** @see
+/** A type for working with validated Committee on Uniform Security Identification Procedures (CUSIP) identifiers as
+  * defined in [ANSI X9.6-2020 Financial Services - Committee on Uniform Security Identification Procedures Securities
+  * Identification CUSIP](https://webstore.ansi.org/standards/ascx9/ansix92020) ("The Standard").
+  *
+  * A CUSIP "number" (so-called by The Standard because originally they were composed only of decimal digits, but now
+  * they can also use letters) is comprised of 9 ASCII characters with the following parts, in order (Section 3.1 "CUSIP
+  * number length" of the standard):
+  *
+  *   - A six-character uppercase alphanumeric _Issuer Number_.
+  *   - A two-character uppercase alphanumeric _Issue Number_.
+  *   - A single decimal digit representing the _Check Digit_ computed using what The Standard calls the "modulus 10
+  *     'double-add-double' technique".
+  *
+  * @see
   *   https://en.wikipedia.org/wiki/CUSIP
   *
   * @see
   *   https://www.cusip.com/identifiers.html?section=CUSIP
   */
 final case class Cusip private (value: String) {
-  def base: String = value.substring(0, 6)
-  def issue: String = value.substring(6, 8)
+
+  /** @return just the _Check Digit_ portion of the CUSIP (one character). */
   def checkDigit: String = value.substring(8, 9)
+
+  /** @return
+    *   `Some(c)` containing the first character of the CUSIP if it is actually a CUSIP International Numbering System
+    *   (CINS) identifier, `None` otherwise.
+    */
+  def cinsCountryCode: Option[Char] = value(0) match {
+    case c if (c >= '0') && (c <= '9') => None
+    case c if (c >= 'A') && (c <= 'Z') => Some(c)
+    case _ =>
+      throw new IllegalStateException(
+        s"It should not be possible to have the first character of a CUSIP other than uppercase ASCII alphanumeric, but it is '${value(0)}' in \"$value\""
+      )
+  }
+
+  /** @return true if [[issueNumber]] is reserved for private use. */
+  def hasPrivateIssue: Boolean = {
+    val temp = issuerNumber
+    val nineInTensPlace = temp(6) == '9'
+    val digitInOnesPlace = Character.isDigit(temp(7))
+    val letterInOnesPlace = (temp(7) >= 'A') && (temp(7) <= 'Y')
+    nineInTensPlace && (digitInOnesPlace || letterInOnesPlace)
+  }
+
+  /** @return true if [[issuerNumber]] is reserved for private use. */
+  def hasPrivateIssuer: Boolean = {
+    val temp = issuerNumber
+    if (temp(3) == '9' && temp(4) == '9') {
+      // "???99?"
+      true
+    } else if (
+      temp(0) == '9' && temp(1) == '9' && Character.isDigit(temp(2)) && Character
+        .isDigit(temp(3)) && Character.isDigit(temp(4))
+    ) {
+      // "99000?" to "99999?"
+      true
+    } else {
+      false
+    }
+  }
+
+  /** @return
+    *   `true` if this CUSIP identifier is actually a CUSIP International Numbering System (CINS) identifier, `false`
+    *   otherwise (i.e., that it has a letter as the first character of `issuerNumber`).
+    *
+    * @see
+    *   [[isCinsBase]] and [[isCinsExtended]].
+    */
+  def isCins: Boolean = value(0) match {
+    case c if (c >= '0') && (c <= '9') => false
+    case c if (c >= 'A') && (c <= 'Z') => true
+    case _ =>
+      throw new IllegalStateException(
+        s"It should not be possible to have the first character of a CUSIP other than uppercase ASCII alphanumeric, but it is '${value(0)}' in \"$value\""
+      )
+  }
+
+  /** @return
+    *   `true` if this CUSIP identifier is actually a CUSIP International Numbering System (CINS) identifier (with the
+    *   further restriction that it *does not* use 'I', 'O' or 'Z' as its country code), false otherwise.
+    *
+    * @see
+    *   [[isCins]] and [[isCinsExtended]].
+    */
+  def isCinsBase: Boolean = value(0) match {
+    case c if (c >= '0') && (c <= '9') => false
+    case c if (c >= 'A') && (c <= 'H') => true
+    case c if c == 'I'                 => false
+    case c if (c >= 'J') && (c <= 'N') => true
+    case c if c == 'O'                 => false
+    case c if (c >= 'P') && (c <= 'Y') => true
+    case c if c == 'Z'                 => false
+    case _ =>
+      throw new IllegalStateException(
+        s"It should not be possible to have the first character of a CUSIP other than uppercase ASCII alphanumeric, but it is '${value(0)}' in \"$value\""
+      )
+  }
+
+  /** @return
+    *   `true` if this CUSIP identifier is actually a CUSIP International Numbering System (CINS) identifier (with the
+    *   restriction that it *does* use 'I', 'O' or 'Z' as its country code), false otherwise.
+    *
+    * @see
+    *   [[isCins]] and [[isCinsExtended]].
+    */
+  def isCinsExtended: Boolean = value(0) match {
+    case c if (c >= '0') && (c <= '9') => false
+    case c if (c >= 'A') && (c <= 'H') => false
+    case c if c == 'I'                 => true
+    case c if (c >= 'J') && (c <= 'N') => false
+    case c if c == 'O'                 => true
+    case c if (c >= 'P') && (c <= 'Y') => false
+    case c if c == 'Z'                 => false
+    case _ =>
+      throw new IllegalStateException(
+        s"It should not be possible to have the first character of a CUSIP other than uppercase ASCII alphanumeric, but it is '${value(0)}' in \"$value\""
+      )
+  }
+
+  /** @return
+    *   `true` if the CUSIP is reserved for private use (i.e., either [[hasPrivateIssuer]] or [[hasPrivateIssue]] are
+    *   `true`.
+    */
+  def isPrivateUse: Boolean = hasPrivateIssuer || hasPrivateIssue
+
+  /** @return just the _Issue Number_ portion of the CUSIP (two characters). */
+  def issueNumber: String = value.substring(6, 8)
+
+  /** @return just the _Issuer Number_ portion of the CUSIP (six characters). */
+  def issuerNumber: String = value.substring(0, 6)
+
+  /** @return the "payload" -- everything except the _Check Digit_. */
+  def payload: String = value.substring(0, 8)
+
+  /** @return [[value]] since it is already a `String`. */
   override def toString: String = value
+
+  /** @return [[value]] prefixed by "`cusip:`". */
   def toStringTagged: String = s"cusip:$value"
+
 }
 
 object Cusip {
@@ -107,17 +237,17 @@ object Cusip {
     checkDigitFormat.matches(string.trim)
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
-    * 9 and each component is the right mix of letters, digits and/or special characters. The apply() method is more
-    * permissive, because it will trim leading and/or trailing whitespace and convert to uppercase before validating the
-    * CUSIP.
+    * 9 and each component is the right mix of letters, digits and/or special characters. The `fromString()` method is
+    * more permissive, because it will trim leading and/or trailing whitespace and convert to uppercase before
+    * validating the CUSIP.
     */
-  def isValidCusipFormatStrict(string: String): Boolean =
+  def isValidStrict(string: String): Boolean =
     cusipFormat.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
+  /** This returns true if the input String would be allowed as an argument to `fromString()`.
     */
-  def isValidCusipFormatLoose(string: String): Boolean =
-    cusipFormat.matches(string.trim.toUpperCase)
+  def isValid(string: String): Boolean =
+    cusipFormat.matches(normalize(string))
 
   def fromParts(
       base: String,
