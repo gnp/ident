@@ -7,7 +7,8 @@ The `ident` library contains Scala classes for working with identifiers of
 various types that have been validated to have the correct format:
 
 * **CIK**: An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical
-identifier associated with every entity that files with the SEC.
+identifier associated with every entity that files with the SEC (both the entity
+submitting the filing and the entity that is the subject of the filing).
 
 * **CUSIP**: An identifier from [Committee on Uniform Security Identification
 Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP) for
