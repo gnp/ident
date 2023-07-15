@@ -28,6 +28,25 @@ Identifier](https://www.gleif.org/en/about-lei/introducing-the-legal-entity-iden
 * **MIC**: A (Financial) [Market Identifier
   Code](https://en.wikipedia.org/wiki/Market_Identifier_Code) (MIC).
 
+And, it includes integrations with a variety of other modules:
+
+* **[Circe](https://circe.github.io/circe/)**: A
+  [JSON](https://www.json.org/json-en.html) library for Scala powered by
+  [Cats](https://typelevel.org/cats/). Use the `ident-circe` module.
+
+* **[ZIO Config](https://zio.dev/zio-config/)**: An extension to
+  [ZIO](https://zio.dev)'s built-in [Configuration
+  facility](https://zio.dev/reference/configuration/). Use the
+  `ident-zio-config` module.
+
+* **[ZIO Json](https://zio.dev/zio-json/)**: "A fast and secure
+  [JSON](https://www.json.org/json-en.html) library with tight
+  [ZIO](https://zio.dev) integration". Use the `ident-zio-json` module.
+
+* **[ZIO Schema](https://zio.dev/zio-schema/)**: "A [ZIO](https://zio.dev)-based
+  library for modeling the schema of data structures as first-class values. Use
+  the `ident-zio-schema` module.
+
 
 ## Example
 
