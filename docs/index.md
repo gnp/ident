@@ -6,51 +6,29 @@ Releases](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo
 The `ident` library contains Scala classes for working with identifiers of
 various types that have been validated to have the correct format:
 
-* CIK: SEC / EDGAR Central Index Key (CIK) number
+* **CIK**: An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical
+identifier associated with every entity that files with the SEC.
 
-* [ISIN](https://github.com/gnp/isin-sc/): International Securities
-  Identification Number (ISO 6166:2021)
-
-
-## CIK
-
-An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical identifier
-associated with every entity that files with the SEC.
-
-
-## CUSIP
-
-An identifier from [Committee on Uniform Security Identification
+* **CUSIP**: An identifier from [Committee on Uniform Security Identification
 Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP) for
 North American securities identification.
 
+* **FIGI**: A [Financial Instrument Global
+Identifier](https://www.openfigi.com/about/figi) (FIGI).
 
-## FIGI
-
-A [Financial Instrument Global Identifier](https://www.openfigi.com/about/figi)
-(FIGI).
-
-
-## ISIN
-
-International Security Identifiers (ISINs) as defined in [ISO 6166:2021
-Financial services — International securities identification number
+* **ISIN**: International Security Identifiers (ISINs) as defined in [ISO
+6166:2021 Financial services — International securities identification number
 (ISIN)](https://www.iso.org/standard/78502.html) ("The Standard").
 
-
-## LEI
-
-An ISO standard (ISO 17442-1:2020(E)) [Legal Entity
+* **LEI**: An ISO standard (ISO 17442-1:2020(E)) [Legal Entity
 Identifier](https://www.gleif.org/en/about-lei/introducing-the-legal-entity-identifier-lei)
 (LEI).
 
-
-## MIC
-
-A (Financial) [Market Identifier Code](https://en.wikipedia.org/wiki/Market_Identifier_Code) (MIC).
+* **MIC**: A (Financial) [Market Identifier
+  Code](https://en.wikipedia.org/wiki/Market_Identifier_Code) (MIC).
 
 
-### Example
+## Example
 
 ```scala mdoc:invisible
 import com.gregorpurdy.ident.Isin
