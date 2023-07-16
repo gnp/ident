@@ -3,7 +3,7 @@ import Dependencies._
 val Scala2Version = "2.13.11"
 val Scala3Version = "3.3.0"
 
-ThisBuild / scalaVersion := Scala2Version // For JDK 16 compatibility
+ThisBuild / scalaVersion := Scala3Version // For JDK 16 compatibility
 
 ThisBuild / organization := "com.gregorpurdy"
 ThisBuild / version := "0.3.1-SNAPSHOT"
