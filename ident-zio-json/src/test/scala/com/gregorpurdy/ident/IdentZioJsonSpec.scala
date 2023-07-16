@@ -29,16 +29,14 @@ object IdentZioJsonSpec extends ZIOSpecDefault {
 
   def spec: Spec[Any, Any] = suite("IdentZioJsonSpec")(
     test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
+      val expected = Isin.fromString(isinString).toOption.get
       val result = isinJsonString.fromJson[Isin]
-
-      assert(result)(equalTo(Right(Isin.fromString(isinString).toOption.get)))
+      assert(result)(isRight(equalTo(expected)))
     },
     test("Correctly fail to parse an invalid JSON") {
-      val expected: Either[String, Isin] =
-        Left("(expected '\"' got '5')")
+      val expected = "(expected '\"' got '5')"
       val result = "53".fromJson[Isin]
-
-      assert(result)(equalTo(expected))
+      assert(result)(isLeft(equalTo(expected)))
     }
   )
 
