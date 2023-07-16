@@ -33,6 +33,7 @@ final case class Isin private (value: String) {
   def securityIdentifier: String = value.substring(2, 11)
   def checkDigit: String = value.substring(11, 12)
   override def toString(): String = value
+  def toStringTagged: String = s"isin:$value"
 }
 
 object Isin {
