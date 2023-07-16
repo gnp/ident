@@ -286,6 +286,7 @@ lazy val identZioSchema = (project in file("ident-zio-schema"))
     libraryDependencies ++= Seq(
       ZioSchema % Compile,
       ZioSchemaDerivation % Compile,
+      ZioSchemaJson % Test,
       Slf4JApi % Test,
       JclOverSlf4J % Test,
       Log4JOverSlf4J % Test,
