@@ -29,9 +29,7 @@ final case class Cik private (value: Long) {
 
 }
 
-object Cik {
-
-  implicit val ord: Ordering[Cik] = Ordering.by(_.value)
+object Cik extends CikVersionSpecific {
 
   private val cikFormat = "([1-9][0-9]{0,9})".r
 

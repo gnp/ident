@@ -162,9 +162,7 @@ final case class Cusip private (value: String) {
 
 }
 
-object Cusip {
-
-  implicit val ord: Ordering[Cusip] = Ordering.by(_.value)
+object Cusip extends CusipVersionSpecific {
 
   val baseFormat: Regex = "[A-Z0-9*@#]{6}".r
   val issueFormat: Regex = "[A-Z0-9*@#]{2}".r

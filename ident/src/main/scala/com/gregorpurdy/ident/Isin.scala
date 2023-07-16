@@ -36,9 +36,7 @@ final case class Isin private (value: String) {
   def toStringTagged: String = s"isin:$value"
 }
 
-object Isin {
-
-  implicit val ord: Ordering[Isin] = Ordering.by(_.value)
+object Isin extends IsinVersionSpecific {
 
   val countryCodeFormat: Regex = "[A-Z]{2}".r
   val securityIdentifierFormat: Regex = "[A-Z0-9]{9}".r

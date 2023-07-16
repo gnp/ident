@@ -28,9 +28,7 @@ final case class Mic private (value: String) {
   def toStringTagged: String = s"mic:$value"
 }
 
-object Mic {
-
-  implicit val ord: Ordering[Mic] = Ordering.by(_.value)
+object Mic extends MicVersionSpecific {
 
   /** This will only consider `value` valid if it has no whitespace, all letters are already uppercase, the length is 4
     * and all characters are ASCII alphanumeric.

@@ -74,9 +74,7 @@ final case class Lei private (value: String) {
 
 }
 
-object Lei {
-
-  implicit val ord: Ordering[Lei] = Ordering.by(_.value)
+object Lei extends LeiVersionSpecific {
 
   val leiFormat: Regex = "([A-Z0-9]{4})([A-Z0-9]{14})([0-9]{2})".r
   val louIdentifierFormat: String = "([A-Z0-9]{4})"

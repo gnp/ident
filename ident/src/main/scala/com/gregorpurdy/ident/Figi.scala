@@ -54,9 +54,7 @@ final case class Figi private (value: String) {
 
 }
 
-object Figi {
-
-  implicit val ord: Ordering[Figi] = Ordering.by(_.value)
+object Figi extends FigiVersionSpecific {
 
   val providerFormat: Regex = "[B-DF-HJ-NP-TV-Z0-9]{2}".r
   val providerExclusions: Set[String] = Set("BS", "BM", "GG", "GB", "GH", "KY", "VG")
