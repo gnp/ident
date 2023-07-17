@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ident
 
+import com.gregorpurdy.ccs.IsoIec7064
+
 import java.time.Instant
 import scala.util.matching.Regex
 
@@ -81,34 +83,12 @@ object Lei extends LeiVersionSpecific {
   val entityIdentifierFormat: String = "([A-Z0-9]{14})"
   val checkDigitsFormat: String = "([0-9]{2})"
 
-  /** This algorithm uses as MAX value computed from Long.MaxValue by subtracting the numeric value of 'Z' (35) and
-    * dividing by 100", so we can use MAX as a threshold to compute the modulus before we are done, but never as long as
-    * there is still room to multiply by 100 and add 36 without exceeding Long.MaxValue
-    */
-  private val MAX = (Long.MaxValue - Character.getNumericValue('Z')) / 100
-
-  private val MODULUS = 97
-
-  /** @param string
-    *   you can call this with a complete identifier with check digits already appended, and check that the result is 1
-    *   as part of verifying that the identifier is valid. Be sure the input string is purely alphanumeric.
-    */
-  def compute_iso7064_mod97_10(string: String): Int = {
-    val temp = string.map(Character.getNumericValue(_).toLong).fold(0L) { (total, charValue) =>
-      val factor = if (charValue > 9) 100 else 10
-      val nextValue = total * factor + charValue
-      if (nextValue > MAX) nextValue % MODULUS else nextValue
-    }
-
-    (temp % MODULUS).toInt
-  }
-
   /** @param string
     *   should be a string WITH two zero check digits ("00") already appended to the right to calculate the correct
     *   check digits for a base identifier. Be sure the input string is purely alphanumeric.
     */
   def compute_check_digits(string: String): Int = {
-    98 - compute_iso7064_mod97_10(string)
+    98 - IsoIec7064.mod97_10(string)
   }
 
   /** Strict validation. Exactly 20 characters, all letters already uppercase, no non-alphanumeric characters, and check
@@ -125,7 +105,7 @@ object Lei extends LeiVersionSpecific {
       else {
         val n = check.toInt
         if (n < 2 || n > 98) false
-        else 1 == compute_iso7064_mod97_10(value)
+        else 1 == IsoIec7064.mod97_10(value)
       }
     }
   }

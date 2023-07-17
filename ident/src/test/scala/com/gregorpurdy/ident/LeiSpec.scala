@@ -16,6 +16,7 @@
 
 package com.gregorpurdy.ident
 
+import com.gregorpurdy.ccs.IsoIec7064
 import zio.Chunk
 import zio.test.Assertion.*
 import zio.test.*
@@ -96,7 +97,7 @@ object LeiSpec extends ZIOSpecDefault {
     test(
       s"Correctly get 1 for compute_iso7064_mod97_10(_)"
     ) {
-      val result = Lei.compute_iso7064_mod97_10(value)
+      val result = IsoIec7064.mod97_10(value)
       assert(result)(equalTo(1))
     }
   )
