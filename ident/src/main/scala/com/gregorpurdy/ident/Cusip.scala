@@ -175,8 +175,8 @@ object Cusip extends CusipVersionSpecific {
       base: String,
       issue: String
   ): String = {
-    val tempBase = base.trim.toUpperCase
-    val tempIssue = issue.trim.toUpperCase
+    val tempBase = normalize(base)
+    val tempIssue = normalize(issue)
 
     if (!isValidBaseFormatStrict(tempBase))
       throw new IllegalArgumentException(
@@ -203,19 +203,19 @@ object Cusip extends CusipVersionSpecific {
     baseFormat.matches(string)
 
   def isValidBaseFormatLoose(string: String): Boolean =
-    baseFormat.matches(string.trim.toUpperCase)
+    baseFormat.matches(normalize(string))
 
   def isValidIssueFormatStrict(string: String): Boolean =
     issueFormat.matches(string)
 
   def isValidIssueFormatLoose(string: String): Boolean =
-    issueFormat.matches(string.trim.toUpperCase)
+    issueFormat.matches(normalize(string))
 
   def isValidCheckDigitFormatStrict(string: String): Boolean =
     checkDigitFormat.matches(string)
 
   def isValidCheckDigitFormatLoose(string: String): Boolean =
-    checkDigitFormat.matches(string.trim)
+    checkDigitFormat.matches(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 9 and each component is the right mix of letters, digits and/or special characters. The `fromString()` method is
@@ -235,9 +235,9 @@ object Cusip extends CusipVersionSpecific {
       issue: String,
       checkDigit: String
   ): Either[String, Cusip] = {
-    val tempBase = base.trim.toUpperCase
-    val tempIssue = issue.trim.toUpperCase
-    val tempCheckDigit = checkDigit.trim.toUpperCase
+    val tempBase = normalize(base)
+    val tempIssue = normalize(issue)
+    val tempCheckDigit = normalize(checkDigit)
 
     if (!isValidBaseFormatStrict(tempBase))
       Left(s"Format of base '$base' is not valid")
@@ -260,8 +260,8 @@ object Cusip extends CusipVersionSpecific {
   /** Create a CUSIP from a base and issue, computing the correct check digit automatically.
     */
   def fromPartsCalcCheckDigit(base: String, issue: String): Either[String, Cusip] = {
-    val tempBase = base.trim.toUpperCase
-    val tempIssue = issue.trim.toUpperCase
+    val tempBase = normalize(base)
+    val tempIssue = normalize(issue)
 
     if (!isValidBaseFormatStrict(tempBase))
       Left(s"Format of base '$base' is not valid")

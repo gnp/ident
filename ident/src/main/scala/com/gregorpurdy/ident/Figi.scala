@@ -70,9 +70,9 @@ object Figi extends FigiVersionSpecific {
       scope: String,
       id: String
   ): String = {
-    val tempProvider = provider.trim.toUpperCase
-    val tempScope = scope.trim.toUpperCase
-    val tempId = id.trim.toUpperCase
+    val tempProvider = normalize(provider)
+    val tempScope = normalize(scope)
+    val tempId = normalize(id)
 
     if (!isValidProviderFormatStrict(tempProvider))
       throw new IllegalArgumentException(
@@ -105,25 +105,25 @@ object Figi extends FigiVersionSpecific {
     providerFormat.matches(string) && !providerExclusions.contains(string)
 
   def isValidProviderFormatLoose(string: String): Boolean =
-    isValidProviderFormatStrict(string.trim.toUpperCase)
+    isValidProviderFormatStrict(normalize(string))
 
   def isValidScopeFormatStrict(string: String): Boolean =
     scopeFormat.matches(string)
 
   def isValidScopeFormatLoose(string: String): Boolean =
-    isValidScopeFormatStrict(string.trim.toUpperCase)
+    isValidScopeFormatStrict(normalize(string))
 
   def isValidIdFormatStrict(string: String): Boolean =
     idFormat.matches(string)
 
   def isValidIdFormatLoose(string: String): Boolean =
-    isValidIdFormatStrict(string.trim.toUpperCase)
+    isValidIdFormatStrict(normalize(string))
 
   def isValidCheckDigitFormatStrict(string: String): Boolean =
     checkDigitFormat.matches(string)
 
   def isValidCheckDigitFormatLoose(string: String): Boolean =
-    isValidCheckDigitFormatStrict(string.trim)
+    isValidCheckDigitFormatStrict(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 12 and each component is the right mix of letters, digits and/or special characters. The apply() method is more
@@ -136,7 +136,7 @@ object Figi extends FigiVersionSpecific {
   /** This returns true if the input String would be allowed as an argument to the apply() method.
     */
   def isValidFigiFormatLoose(string: String): Boolean =
-    isValidFigiFormatStrict(string.trim.toUpperCase)
+    isValidFigiFormatStrict(normalize(string))
 
   def fromParts(
       provider: String,
@@ -144,10 +144,10 @@ object Figi extends FigiVersionSpecific {
       id: String,
       checkDigit: String
   ): Either[String, Figi] = {
-    val tempProvider = provider.trim.toUpperCase
-    val tempScope = scope.trim.toUpperCase
-    val tempId = id.trim.toUpperCase
-    val tempCheckDigit = checkDigit.trim.toUpperCase
+    val tempProvider = normalize(provider)
+    val tempScope = normalize(scope)
+    val tempId = normalize(id)
+    val tempCheckDigit = normalize(checkDigit)
 
     if (!isValidProviderFormatStrict(tempProvider))
       Left(s"Format of provider '$provider' is not valid")
@@ -171,9 +171,9 @@ object Figi extends FigiVersionSpecific {
   /** Create a FIGI from a provider, scope and id, computing the correct check digit automatically.
     */
   def fromPartsCalcCheckDigit(provider: String, scope: String, id: String): Either[String, Figi] = {
-    val tempProvider = provider.trim.toUpperCase
-    val tempScope = scope.trim.toUpperCase
-    val tempId = id.trim.toUpperCase
+    val tempProvider = normalize(provider)
+    val tempScope = normalize(scope)
+    val tempId = normalize(id)
 
     if (!isValidProviderFormatStrict(tempProvider))
       Left(s"Format of provider '$provider' is not valid")
