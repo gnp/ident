@@ -36,7 +36,7 @@ object Modulus10DoubleAddDouble {
     *   - Upper-case letters 'A' to 'Z'
     *
     * @note
-    *   This variant is used by [[ident.Cusip]].
+    *   This variant is used by [[ident.Cusip]] and [[ident.Figi]].
     *
     * @throws IllegalArgumentException
     *   if an illegal character is encountered
