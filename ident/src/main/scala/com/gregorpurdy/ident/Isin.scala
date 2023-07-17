@@ -85,7 +85,7 @@ object Isin extends IsinVersionSpecific {
       countryCode: String,
       securityIdentifier: String
   ): String =
-    Modulus10DoubleAddDouble.calculateCheckDigitUnsafeAltFunctional(s"$countryCode$securityIdentifier")
+    Modulus10DoubleAddDouble.calculateCheckDigitUnsafeAltTable(s"$countryCode$securityIdentifier")
 
   def isValidCountryCodeFormatStrict(string: String): Boolean =
     countryCodeFormat.matches(string)
