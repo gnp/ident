@@ -80,7 +80,7 @@ object Modulus10DoubleAddDouble {
       if (product >= 10) Seq(product / 10, product % 10) else Seq(product)
     }
 
-    val temp = payload
+    val sum = payload
       .map(charValueUnsafe) // Convert characters to their code values (0 - 36)
       .flatMap { x =>
         if (x >= 10) Seq(x / 10, x % 10) else Seq(x)
@@ -92,9 +92,7 @@ object Modulus10DoubleAddDouble {
       } // Double every other one
       .sum
 
-    val diff = 10 - (temp % 10)
-    val digit = if (diff == 10) 0 else diff
-
+    val digit = (10 - (sum % 10)) % 10
     digit.toString
   }
 
