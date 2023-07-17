@@ -16,8 +16,11 @@
 
 package com.gregorpurdy
 
-package object ident {
-
-  def normalize(s: String) = s.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-}
+/** This package is for implementations of Check Character Systems used by identifiers in the Ident module.
+  *
+  * Some of the identifiers--such as [[ident.Cusip]] and [[ident.Isin]]--use a single decimal Check Character (aka a
+  * "Check Digit"), while others use multiple characters and/or character(s) that may include non-digits. Therefore, we
+  * adopt the generic term "Check Character Systems" of the ISO/IEC 7064 standard (which is used for [[ident.Lei]] check
+  * character calculation).
+  */
+package object ccs {}

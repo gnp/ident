@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ident
 
+import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
+
 import scala.util.matching.Regex
 
 /** A type for working with validated Committee on Uniform Security Identification Procedures (CUSIP) identifiers as
@@ -164,8 +166,8 @@ final case class Cusip private (value: String) {
 
 object Cusip extends CusipVersionSpecific {
 
-  val baseFormat: Regex = "[A-Z0-9*@#]{6}".r
-  val issueFormat: Regex = "[A-Z0-9*@#]{2}".r
+  val baseFormat: Regex = "[A-Z0-9]{6}".r
+  val issueFormat: Regex = "[A-Z0-9]{2}".r
   val checkDigitFormat: Regex = "[0-9]".r
   val cusipFormat: Regex = "([A-Z0-9*@#]{6})([A-Z0-9*@#]{2})([0-9])".r
 
@@ -194,27 +196,8 @@ object Cusip extends CusipVersionSpecific {
   private def calculateCheckDigitUnsafe(
       base: String,
       issue: String
-  ): String = {
-    val s = s"$base$issue"
-    var sum: Int = 0
-    for (i <- 1 to 8) {
-      val v = s(i - 1) match {
-        case c if c >= '0' && c <= '9' => c - '0'
-        case c if c >= 'A' && c <= 'Z' => c - 'A' + 10
-        case '*'                       => 36
-        case '@'                       => 37
-        case '#'                       => 38
-        case x =>
-          throw new IllegalStateException(
-            s"It should not have been possible for this character to make it through: '$x'"
-          )
-      }
-      val vv = if (i % 2 == 0) v * 2 else v
-      sum += (vv / 10) + (vv % 10)
-    }
-    val digit = (10 - (sum % 10)) % 10
-    digit.toString
-  }
+  ): String =
+    Modulus10DoubleAddDouble.calculateCheckDigitUnsafe(s"$base$issue")
 
   def isValidBaseFormatStrict(string: String): Boolean =
     baseFormat.matches(string)

@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ident
 
+import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
+
 import scala.util.matching.Regex
 
 /** ISIN stands for International Security Identification Number. It is a String identifer composed of three parts: (1)
@@ -82,38 +84,8 @@ object Isin extends IsinVersionSpecific {
   private def calculateCheckDigitUnsafe(
       countryCode: String,
       securityIdentifier: String
-  ): String = {
-    def charValue(char: Char): Int = char match {
-      case c if c >= '0' && c <= '9' => c - '0'
-      case c if c >= 'A' && c <= 'Z' => c - 'A' + 10
-      case x =>
-        throw new IllegalStateException(
-          s"It should not have been possible for this character to make it through: '$x'"
-        )
-    }
-
-    def timesTwo(x: Int): Seq[Int] = {
-      val product = x * 2
-      if (product >= 10) Seq(product / 10, product % 10) else Seq(product)
-    }
-
-    val temp = (countryCode + securityIdentifier)
-      .map(charValue) // Convert characters to their code values (0 - 36)
-      .flatMap { x =>
-        if (x >= 10) Seq(x / 10, x % 10) else Seq(x)
-      } // Convert two-digit codes to two one-digit codes
-      .reverse // Start the alternate multiply-by-two and leave-alone from the right
-      .zipWithIndex // Pair each number with an index we can use to drive the alternation
-      .flatMap { case (x, i) =>
-        if (i % 2 == 0) timesTwo(x) else Seq(x)
-      } // Double every other one
-      .sum
-
-    val diff = 10 - (temp % 10)
-    val digit = if (diff == 10) 0 else diff
-
-    digit.toString
-  }
+  ): String =
+    Modulus10DoubleAddDouble.calculateCheckDigitUnsafeAltFunctional(s"$countryCode$securityIdentifier")
 
   def isValidCountryCodeFormatStrict(string: String): Boolean =
     countryCodeFormat.matches(string)
