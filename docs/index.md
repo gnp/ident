@@ -10,9 +10,13 @@ various types that have been validated to have the correct format:
 identifier associated with every entity that files with the SEC (both the entity
 submitting the filing and the entity that is the subject of the filing).
 
-* **CUSIP**: An identifier from [Committee on Uniform Security Identification
-Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP) for
-North American securities identification.
+* **CUSIP**: An [ANSI](https://www.ansi.org) standard (ANSI X9.6-2020) identifier for North American
+securities, and select other countries that have adopted it as part of the
+[CINS](https://www.cusip.com/identifiers.html#/CINS) system. Defined by the
+[Committee on Uniform Security Identification
+Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP), from
+which it takes its name. The standard is [available for purchase from the ANSI
+Store](https://webstore.ansi.org/standards/ascx9/ansix92020).
 
 * **FIGI**: A [Financial Instrument Global
 Identifier](https://www.openfigi.com/about/figi) (FIGI).
