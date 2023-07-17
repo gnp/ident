@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ident
 
+import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
+
 import scala.util.matching.Regex
 
 /** @see
@@ -96,25 +98,8 @@ object Figi extends FigiVersionSpecific {
       provider: String,
       scope: String,
       id: String
-  ): String = {
-    val s = s"$provider$scope$id"
-    var sum: Int = 0
-    for (i <- 1 to 11) {
-      val v = s(i - 1) match {
-        case c if c >= '0' && c <= '9' => c - '0'
-        case c if c >= 'A' && c <= 'Z' => c - 'A' + 10
-        case x =>
-          throw new IllegalStateException(
-            s"It should not have been possible for this character to make it through: '$x'"
-          )
-      }
-      val vv = if (i % 2 == 0) v * 2 else v
-      sum += (vv / 10) + (vv % 10)
-    }
-    val digit = (10 - (sum % 10)) % 10
-//    val digit = 10 - (sum % 10)
-    digit.toString
-  }
+  ): String =
+    Modulus10DoubleAddDouble.calculateCheckDigitUnsafe(s"$provider$scope$id")
 
   def isValidProviderFormatStrict(string: String): Boolean =
     providerFormat.matches(string) && !providerExclusions.contains(string)
