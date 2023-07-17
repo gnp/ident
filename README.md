@@ -7,11 +7,16 @@ The `ident` library contains Scala classes for working with identifiers of
 various types that have been validated to have the correct format:
 
 * **CIK**: An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical
-identifier associated with every entity that files with the SEC.
+identifier associated with every entity that files with the SEC (both the entity
+submitting the filing and the entity that is the subject of the filing).
 
-* **CUSIP**: An identifier from [Committee on Uniform Security Identification
-Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP) for
-North American securities identification.
+* **CUSIP**: An [ANSI](https://www.ansi.org) standard (ANSI X9.6-2020) identifier for North American
+securities, and select other countries that have adopted it as part of the
+[CINS](https://www.cusip.com/identifiers.html#/CINS) system. Defined by the
+[Committee on Uniform Security Identification
+Procedures](https://www.cusip.com/identifiers.html?section=CUSIP) (CUSIP), from
+which it takes its name. The standard is [available for purchase from the ANSI
+Store](https://webstore.ansi.org/standards/ascx9/ansix92020).
 
 * **FIGI**: A [Financial Instrument Global
 Identifier](https://www.openfigi.com/about/figi) (FIGI).
@@ -26,6 +31,25 @@ Identifier](https://www.gleif.org/en/about-lei/introducing-the-legal-entity-iden
 
 * **MIC**: A (Financial) [Market Identifier
   Code](https://en.wikipedia.org/wiki/Market_Identifier_Code) (MIC).
+
+And, it includes integrations with a variety of other modules:
+
+* **[Circe](https://circe.github.io/circe/)**: A
+  [JSON](https://www.json.org/json-en.html) library for Scala powered by
+  [Cats](https://typelevel.org/cats/). Use the `ident-circe` module.
+
+* **[ZIO Config](https://zio.dev/zio-config/)**: An extension to
+  [ZIO](https://zio.dev)'s built-in [Configuration
+  facility](https://zio.dev/reference/configuration/). Use the
+  `ident-zio-config` module.
+
+* **[ZIO Json](https://zio.dev/zio-json/)**: "A fast and secure
+  [JSON](https://www.json.org/json-en.html) library with tight
+  [ZIO](https://zio.dev) integration". Use the `ident-zio-json` module.
+
+* **[ZIO Schema](https://zio.dev/zio-schema/)**: "A [ZIO](https://zio.dev)-based
+  library for modeling the schema of data structures as first-class values. Use
+  the `ident-zio-schema` module.
 
 
 ## Example
