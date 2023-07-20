@@ -16,8 +16,8 @@
 
 package com.gregorpurdy.ccs
 
-/** This algorithm has multiple variants for computing _Check Digits_. One is used by [[ident.Cusip]] and [[ident.Figi]]
-  * and the other is used by [[ident.Isin]].
+/** This algorithm has multiple variants for computing _Check Digits_. One ([[CusipVariant]]) is used by [[ident.Cusip]]
+  * and [[ident.Figi]] and the other ([[IsinVariant]]) is used by [[ident.Isin]].
   *
   * The algorithm is known as "modulus 10 'double-add-double' check digit". The basic idea is to:
   *
@@ -32,20 +32,16 @@ package com.gregorpurdy.ccs
   *   1. compute 10 minus that value
   *   1. if the value is 10, return 0 else return the value itself
   *
-  * There is one variant in imperitive style [[calculateCheckDigitUnsafe]] used by [[ident.Cusip]] and [[ident.Figi]].
+  * [[CusipVariant.calculate]] matches what [[ident.Cusip]] and [[ident.Figi]] need.
   *
-  * There are two other implementations of a variant that matches what [[ident.Isin]] needs, which goes by the same
-  * name, but does not compute the same check digit values.
+  * [[IsinVariant.calculate]] matches what [[ident.Isin]] needs.
   *
-  * One of these implementations is in a functional style, [[calculateCheckDigitUnsafeAltFunctional]] and is used
-  * internally for tests and as a comparison for performance benchmarks. It is more expensive than the table-driven
-  * style because it does digit expansion on the fly. But, it is easier to understand. The implementation maps directly
-  * to the description above.
+  * These two variants are referred to by the same name in the respective standard documents, but they do not compute
+  * the same check digits.
   *
-  * There is also an implementation in a table-driven style, [[calculateCheckDigitUnsafeAltFunctional]] which is the one
-  * actually used when parsing and validating ISINs. The tables are pre-calculated for the net effect each character has
-  * on the checksum accumulator at that point and how it effects whether the next character is in a doubling position or
-  * not.
+  * The simpler private versions are used internally for tests and as a comparison for performance benchmarks. They are
+  * more expensive than the table-driven style but are easier to understand. These implementations map directly to the
+  * descriptions in the Scaladoc, where the table-driven ones do not.
   *
   * @todo
   *   Update the next paragraph
@@ -60,7 +56,7 @@ package com.gregorpurdy.ccs
   */
 object Modulus10DoubleAddDouble {
 
-  def charValueUnsafe(char: Char): Int = char match {
+  private[ccs] def charValue(char: Char): Int = char match {
     case c if c >= '0' && c <= '9' => c - '0'
     case c if c >= 'A' && c <= 'Z' => c - 'A' + 10
     case x =>
@@ -69,161 +65,236 @@ object Modulus10DoubleAddDouble {
       )
   }
 
-  /** This method requires that `payload` has already been validated to be the right format.
-    *
-    * The only characters allowed in `payload` are:
-    *
-    *   - Digits '0' to '9'
-    *   - Upper-case letters 'A' to 'Z'
-    *
-    * @note
-    *   This variant is used by [[ident.Cusip]] and [[ident.Figi]].
-    *
-    * @throws IllegalArgumentException
-    *   if an illegal character is encountered
-    *
-    * @return
-    *   the Check Digit (a one-character String)
-    */
-  def calculateCheckDigitUnsafe(payload: String): String = {
-    val s = payload
-    val l = payload.size
-    var sum: Int = 0
-    for (i <- 1 to l) {
-      val v = charValueUnsafe(s(i - 1))
-      val vv = if (i % 2 == 0) v * 2 else v
-      sum += (vv / 10) + (vv % 10)
-    }
-    val digit = (10 - (sum % 10)) % 10
-    digit.toString
-  }
-
-  /** This method requires that `payload` has already been validated to be the right format.
-    *
-    * The only characters allowed in `payload` are:
-    *
-    *   - Digits '0' to '9'
-    *   - Upper-case letters 'A' to 'Z'
-    *
-    * @note
-    *   This variant is used by [[ident.Isin]].
-    *
-    * @throws IllegalArgumentException
-    *   if an illegal character is encountered
-    *
-    * @return
-    *   the Check Digit (a one-character String)
-    */
-  @throws[IllegalArgumentException]("If encountering an unexpected character")
-  def calculateCheckDigitUnsafeAltFunctional(payload: String): String = {
-    def timesTwo(x: Int): Seq[Int] = {
-      val product = x * 2
-      if (product >= 10) Seq(product / 10, product % 10) else Seq(product)
-    }
-
-    val sum = payload
-      .map(charValueUnsafe) // Convert characters to their code values (0 - 36)
-      .flatMap { x =>
-        if (x >= 10) Seq(x / 10, x % 10) else Seq(x)
-      } // Convert two-digit codes to two one-digit codes
-      .reverse // Start the alternate multiply-by-two and leave-alone from the right
-      .zipWithIndex // Pair each number with an index we can use to drive the alternation
-      .flatMap { case (x, i) =>
-        if (i % 2 == 0) timesTwo(x) else Seq(x)
-      } // Double every other one
-      .sum
-
-    val digit = (10 - (sum % 10)) % 10
-    digit.toString
-  }
-
   import scala.language.implicitConversions
-  implicit def int2Byte(i: Int): Byte = i.toByte
+  private implicit def int2Byte(i: Int): Byte = i.toByte
 
-  /** The width in "steps" each char value consumes when processed. All decimal digits have width one, and all letters
-    * have width two (because their values are two digits, from 10 to 35 inclusive).
+  /** This variant is used by [[ident.Cusip]] and [[ident.Figi]].
     */
+  object CusipVariant {
+
+    /** The maximum value the accumulator can have and still be able to go another iteration without overflowing. Used
+      * to determine when to reduce the accumulator with a modulus operation.
+      *
+      * The maximum amount that can be added in a single iteration occurs when the underlying character value is 34
+      * (letter 'Y') and it is in a doubling position. In that case, the double value is 68, and we add 6 + 8 = 14 to
+      * the sum. So, we subtract that value from the maximum u8 value to get the threshold at which we must pre-mod the
+      * sum before adding at that step.
+      *
+      * You can see this easily with the Mathematica code to generate the table:
+      *
+      * ```mathematica
+      * Table[{n, n*2, Quotient[n * 2, 10],
+      *     Mod[n * 2, 10], Quotient[n * 2, 10] + Mod[n * 2, 10]}, {n, 0,
+      *     35}] // TableForm
+      * ```
+      */
+    private[ccs] val MaxAccumSimple: Byte = Byte.MaxValue - 14
+
+    /** This method requires that `payload` has already been validated to be the right format.
+      *
+      * The only characters allowed in `payload` are:
+      *
+      *   - Digits '0' to '9'
+      *   - Upper-case letters 'A' to 'Z'
+      *
+      * The algorithm processes the input ASCII characters left-to-right, using [[charValue]] to obtain a value for each
+      * character, and counting from one, doubles the ones at even indexes and leaves the ones at odd indexes with their
+      * regular values. The sum of these values is reduced mod 10. The final result is (10 - sum) % 10, which is
+      * converted to a single decimal digit String.
+      *
+      * @note
+      *   This private implementation is in easier-to-understand imperative style exists to support property-based
+      *   testing of the higher performance table-driven implemenation of [[calculate]].
+      *
+      * @throws IllegalArgumentException
+      *   if an illegal character is encountered
+      *
+      * @return
+      *   the Check Digit (a one-character String)
+      */
+    private[ccs] def calculateSimple(payload: String): String = {
+      val l = payload.size
+      var sum: Byte = 0
+      for (i <- 0 until l) {
+        val v = charValue(payload(i))
+        val vv = if (i % 2 == 1) v * 2 else v
+        // Cannot trigger on input < 9 characters long because floor((127 - 14) / 14) = 8.
+        if (sum > MaxAccumSimple) {
+          sum %= 10
+        }
+        sum += (vv / 10) + (vv % 10)
+      }
+      val digit = (10 - (sum % 10)) % 10
+      digit.toString
+    }
+
+    val MaxAccumTable: Byte = Byte.MaxValue - 9
+
 // format: off
-  val WIDTHS: Array[Byte] = Array(
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-      2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-      2, 2, 2, 2, 2, 2,
-  )
+    private val Odds: Array[Byte] = Array(
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 0,
+        2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
+        3, 4, 5, 6, 7, 8
+    )
 // format: on
 
-  /** The net value added to the sum for each char value, if the step count (aka index) at the start of processing that
-    * character is odd. Odds vs. evens differ because evens go through doubling and potentially splitting into two
-    * digits before being summed to make the net value.
-    */
 // format: off
-  val ODDS: Array[Byte] = Array(
-      0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-      2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
-      4, 5, 6, 7, 8, 9, 0, 1, 2, 3,
-      6, 7, 8, 9, 0, 1,
-  )
+    private val Evens: Array[Byte] = Array(
+        0, 2, 4, 6, 8,
+        1, 3, 5, 7, 9,
+        2, 4, 6, 8, 0,
+        3, 5, 7, 9, 1,
+        4, 6, 8, 0, 2,
+        5, 7, 9, 1, 3,
+        6, 8, 0, 2, 4,
+        7
+    )
 // format: on
 
-  /** The net value added to the sum for each char value, if the step count (aka index) at the start of processing that
-    * character is even. Odds vs. evens differ because evens go through doubling and potentially splitting into two
-    * digits before being summed to make the net value.
-    */
-// format: off
-  val EVENS: Array[Byte] = Array(
-    0, 2, 4, 6, 8,
-    1, 3, 5, 7, 9,
-    1, 3, 5, 7, 9,
-    2, 4, 6, 8, 0,
-    2, 4, 6, 8, 0,
-    3, 5, 7, 9, 1,
-    3, 5, 7, 9, 1,
-    4,
-  )
-// format: on
+    def calculate(payload: String): String = {
+      val length = payload.size
+      // val parity = length % 2
+      var sum: Byte = 0
+      for (i <- 0 until length) {
+        val v = charValue(payload(i))
+        val vv = if (i % 2 == 1) Evens(v) else Odds(v)
+        // Cannot trigger on input < 14 characters long because floor((127 - 9) / 9) = 13.
+        if (sum > MaxAccumTable) {
+          sum %= 10
+        }
+        sum += vv
+      }
+      val digit = (10 - (sum % 10)) % 10
+      digit.toString
+    }
 
-  /** The maximum value the accumulator can have and still be able to go another iteration without overflowing. Used to
-    * determine when to reduce the accumulator with a modulus operation. The max addition of any iteration is 9 because
-    * we have pre-computed net values that are already mod 10 themselves.
-    */
-  val MAX_ACCUM: Byte = Byte.MaxValue - 9
+  }
 
-  /** Compute the _checksum_ for a u8 array. No attempt is made to ensure the input string is in the ISIN payload format
-    * or length.
+  /** This variant is used by [[ident.Isin]].
     *
-    * # Panics
-    *
-    * If an illegal character (not an ASCII digit and not an ASCII uppercase letter) is encountered, the char_value()
-    * function this calls will panic.
+    * The tables are pre-calculated for the net effect each character has on the checksum accumulator at that point and
+    * how it effects whether the next character is in a doubling position or not.
     */
-  def calculateCheckDigitUnsafeAltTable(s: String): String = {
-    var sum: Byte = 0
-    var idx: Int = 0
-    for (c <- s.reverseIterator) {
-      val v = charValueUnsafe(c)
-      val w = WIDTHS(v)
-      val x = if ((idx % 2) == 0) {
-        EVENS(v)
+  object IsinVariant {
+
+    /** This method requires that `payload` has already been validated to be the right format.
+      *
+      * The only characters allowed in `payload` are:
+      *
+      *   - Digits '0' to '9'
+      *   - Upper-case letters 'A' to 'Z'
+      *
+      * @note
+      *   This private implementation is in easier-to-understand imperative style exists to support property-based
+      *   testing of the higher performance table-driven implemenation of [[calculate]].
+      *
+      * @throws IllegalArgumentException
+      *   if an illegal character is encountered
+      *
+      * @return
+      *   the Check Digit (a one-character String)
+      */
+    @throws[IllegalArgumentException]("If encountering an unexpected character")
+    private[ccs] def calculateSimple(payload: String): String = {
+      def timesTwo(x: Int): Seq[Int] = {
+        val product = x * 2
+        if (product >= 10) Seq(product / 10, product % 10) else Seq(product)
+      }
+
+      val sum = payload
+        .map(charValue) // Convert characters to their code values (0 - 36)
+        .flatMap { x =>
+          if (x >= 10) Seq(x / 10, x % 10) else Seq(x)
+        } // Convert two-digit codes to two one-digit codes
+        .reverse // Start the alternate multiply-by-two and leave-alone from the right
+        .zipWithIndex // Pair each number with an index we can use to drive the alternation
+        .flatMap { case (x, i) =>
+          if (i % 2 == 0) timesTwo(x) else Seq(x)
+        } // Double every other one
+        .sum
+
+      val digit = (10 - (sum % 10)) % 10
+      digit.toString
+    }
+
+    /** The width in "steps" each char value consumes when processed. All decimal digits have width one, and all letters
+      * have width two (because their values are two digits, from 10 to 35 inclusive).
+      */
+// format: off
+    private val Widths: Array[Byte] = Array(
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2,
+    )
+// format: on
+
+    /** The net value added to the sum for each char value, if the step count (aka index) at the start of processing
+      * that character is odd. Odds vs. evens differ because evens go through doubling and potentially splitting into
+      * two digits before being summed to make the net value.
+      */
+// format: off
+    private val Odds: Array[Byte] = Array(
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
+        4, 5, 6, 7, 8, 9, 0, 1, 2, 3,
+        6, 7, 8, 9, 0, 1,
+    )
+// format: on
+
+    /** The net value added to the sum for each char value, if the step count (aka index) at the start of processing
+      * that character is even. Odds vs. evens differ because evens go through doubling and potentially splitting into
+      * two digits before being summed to make the net value.
+      */
+// format: off
+    private val Evens: Array[Byte] = Array(
+      0, 2, 4, 6, 8,
+      1, 3, 5, 7, 9,
+      1, 3, 5, 7, 9,
+      2, 4, 6, 8, 0,
+      2, 4, 6, 8, 0,
+      3, 5, 7, 9, 1,
+      3, 5, 7, 9, 1,
+      4,
+    )
+// format: on
+
+    /** The maximum value the accumulator can have and still be able to go another iteration without overflowing. Used
+      * to determine when to reduce the accumulator with a modulus operation. The max addition of any iteration is 9
+      * because we have pre-computed net values that are already mod 10 themselves.
+      */
+    val MaxAccumTable: Byte = Byte.MaxValue - 9
+
+    /** Compute the _Check Digit_. No attempt is made to ensure the input string is in the ISIN payload format or
+      * length.
+      */
+    def calculate(s: String): String = {
+      var sum: Byte = 0
+      var idx: Int = 0
+      for (c <- s.reverseIterator) {
+        val v = charValue(c)
+        val w = Widths(v)
+        val x = if ((idx % 2) == 0) Evens(v) else Odds(v)
+        // Cannot trigger on input < 28 bytes long because floor((255 - 9)/9) = 27. Not performing
+        // mod every iteration seems to save a few percent on run time.
+        if (sum > MaxAccumTable) {
+          sum %= 10
+        }
+        sum += x
+        idx += w
+      }
+      sum %= 10
+
+      val diff = 10 - sum
+      val temp = if (diff == 10) {
+        0
       } else {
-        ODDS(v)
+        diff
       }
-      // Cannot trigger on input < 28 bytes long because floor((255 - 9)/9) = 27. Not performing
-      // mod every iteration seems to save a few percent on run time.
-      if (sum > MAX_ACCUM) {
-        sum %= 10
-      }
-      sum += x
-      idx += w
+      temp.toString
     }
-    sum %= 10
 
-    val diff = 10 - sum
-    val temp = if (diff == 10) {
-      0
-    } else {
-      diff
-    }
-    temp.toString
   }
 
 }

@@ -28,10 +28,10 @@ import scala.util.matching.Regex
   * they can also use letters) is comprised of 9 ASCII characters with the following parts, in order (Section 3.1 "CUSIP
   * number length" of the standard):
   *
-  *   - A six-character uppercase alphanumeric _Issuer Number_.
-  *   - A two-character uppercase alphanumeric _Issue Number_.
-  *   - A single decimal digit representing the _Check Digit_ computed using what The Standard calls the "modulus 10
-  *     'double-add-double' technique".
+  *   1. A six-character uppercase alphanumeric _Issuer Number_.
+  *   1. A two-character uppercase alphanumeric _Issue Number_.
+  *   1. A single decimal digit representing the _Check Digit_ computed using what The Standard calls the "modulus 10
+  *      'double-add-double' technique".
   *
   * @see
   *   https://en.wikipedia.org/wiki/CUSIP
@@ -197,7 +197,7 @@ object Cusip extends CusipVersionSpecific {
       base: String,
       issue: String
   ): String =
-    Modulus10DoubleAddDouble.calculateCheckDigitUnsafe(s"$base$issue")
+    Modulus10DoubleAddDouble.CusipVariant.calculate(s"$base$issue")
 
   def isValidBaseFormatStrict(string: String): Boolean =
     baseFormat.matches(string)

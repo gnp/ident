@@ -99,7 +99,7 @@ object Figi extends FigiVersionSpecific {
       scope: String,
       id: String
   ): String =
-    Modulus10DoubleAddDouble.calculateCheckDigitUnsafe(s"$provider$scope$id")
+    Modulus10DoubleAddDouble.CusipVariant.calculate(s"$provider$scope$id")
 
   def isValidProviderFormatStrict(string: String): Boolean =
     providerFormat.matches(string) && !providerExclusions.contains(string)
