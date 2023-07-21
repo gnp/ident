@@ -160,6 +160,27 @@ lazy val examples = (project in file("examples"))
     )
   )
 
+lazy val bench = (project in file("bench"))
+  .dependsOn(ident)
+  .enablePlugins(JmhPlugin)
+  .settings(
+    name := "bench",
+    crossScalaVersions := Nil,
+    publish := {},
+    publish / skip := true,
+    publishLocal := {},
+    crossScalaVersions := Seq(Scala2Version, Scala3Version),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) => stdCompilerOptions2
+        case _            => stdCompilerOptions3
+      }
+    },
+    libraryDependencies ++= Seq(
+      ZioTest % Compile
+    )
+  )
+
 lazy val ident = (project in file("ident"))
   .settings(
     name := "ident",
