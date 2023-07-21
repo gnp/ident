@@ -50,19 +50,25 @@ package com.gregorpurdy.ccs
   * test system, average run time decreases from around 2,015 ns with the functional style to around 19 ns with the
   * table-driven style). Input-dependent variability in run time decreases also from about +/- 14% for the
   * functional-style to about +/- 3% for the table-driven style.
-  *
-  * The numeric value of a u8 ASCII character. Digit characters '0' through '9' map to values 0 through 9, and letter
-  * characters 'A' through 'Z' map to values 10 through 35.
   */
 object Modulus10DoubleAddDouble {
 
+  /** Compute the value of a Character to use in checksum calculations. Only decimal digits and upper- or lower-case
+    * letters have defined values. All other Characters result in a value of zero.
+    *
+    * Decimal digits '0' through '9' map to values 0 through 9, and letter characters 'A' through 'Z' and 'a' through
+    * 'z' map to values 10 through 35.
+    *
+    * @param char
+    *   Any character
+    * @return
+    *   The value of the character for computing the checkum, or zero if it is not an expected character.
+    */
   private[ccs] def charValue(char: Char): Int = char match {
     case c if c >= '0' && c <= '9' => c - '0'
     case c if c >= 'A' && c <= 'Z' => c - 'A' + 10
-    case x =>
-      throw new IllegalArgumentException(
-        s"It should not have been possible for this character to make it through: '$x'"
-      )
+    case c if c >= 'a' && c <= 'z' => c - 'a' + 10
+    case _                         => 0
   }
 
   import scala.language.implicitConversions
@@ -106,24 +112,17 @@ object Modulus10DoubleAddDouble {
       */
     private[ccs] val MaxAccumSimple: Byte = Byte.MaxValue - 14
 
-    /** This method requires that `payload` has already been validated to be the right format.
+    /** This method requires that `payload` has already been validated to be the right format. Any invalid characters
+      * are ignored (do not contribute to the calculated _Check Digit_).
       *
-      * The only characters allowed in `payload` are:
-      *
-      *   - Digits '0' to '9'
-      *   - Upper-case letters 'A' to 'Z'
-      *
-      * The algorithm processes the input ASCII characters left-to-right, using [[charValue]] to obtain a value for each
-      * character, and counting from one, doubles the ones at even indexes and leaves the ones at odd indexes with their
-      * regular values. The sum of these values is reduced mod 10. The final result is (10 - sum) % 10, which is
-      * converted to a single decimal digit String.
+      * The algorithm processes the input characters right-to-left, using [[charValue]] to obtain a value for each
+      * character, and counting from the left, doubles values at odd indexes and leaves the rest with their regular
+      * values. The sum of these values is reduced mod 10. The final result is (10 - sum) % 10, which is converted to a
+      * single decimal digit String.
       *
       * @note
       *   This private implementation is in easier-to-understand imperative style exists to support property-based
       *   testing of the higher performance table-driven implemenation of [[calculate]].
-      *
-      * @throws IllegalArgumentException
-      *   if an illegal character is encountered
       *
       * @return
       *   the Check Digit (a one-character String)
@@ -187,24 +186,16 @@ object Modulus10DoubleAddDouble {
     */
   object IsinVariant {
 
-    /** This method requires that `payload` has already been validated to be the right format.
-      *
-      * The only characters allowed in `payload` are:
-      *
-      *   - Digits '0' to '9'
-      *   - Upper-case letters 'A' to 'Z'
+    /** This method requires that `payload` has already been validated to be the right format. Any invalid characters
+      * are ignored (do not contribute to the calculated _Check Digit_).
       *
       * @note
       *   This private implementation is in easier-to-understand imperative style exists to support property-based
       *   testing of the higher performance table-driven implemenation of [[calculate]].
       *
-      * @throws IllegalArgumentException
-      *   if an illegal character is encountered
-      *
       * @return
       *   the Check Digit (a one-character String)
       */
-    @throws[IllegalArgumentException]("If encountering an unexpected character")
     private[ccs] def calculateSimple(payload: String): String = {
       def timesTwo(x: Int): Seq[Int] = {
         val product = x * 2
@@ -212,7 +203,7 @@ object Modulus10DoubleAddDouble {
       }
 
       val sum = payload
-        .map(charValue) // Convert characters to their code values (0 - 36)
+        .map(charValue) // Convert characters to their code values (0 - 35)
         .flatMap { x =>
           if (x >= 10) Seq(x / 10, x % 10) else Seq(x)
         } // Convert two-digit codes to two one-digit codes
