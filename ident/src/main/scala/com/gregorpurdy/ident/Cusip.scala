@@ -218,16 +218,19 @@ object Cusip extends CusipVersionSpecific {
     checkDigitFormat.matches(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
-    * 9 and each component is the right mix of letters, digits and/or special characters. The `fromString()` method is
-    * more permissive, because it will trim leading and/or trailing whitespace and convert to uppercase before
-    * validating the CUSIP.
+    * 9 and each component is the right mix of letters, digits and/or special characters. It does not validate the check
+    * digit.
+    *
+    * [[fromString]] is more permissive, because it will trim leading and/or trailing whitespace and convert to
+    * uppercase before validating the CUSIP.
     */
-  def isValidStrict(string: String): Boolean =
+  def isValidFormatStrict(string: String): Boolean =
     cusipFormat.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to `fromString()`.
+  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
+    * check digit.
     */
-  def isValid(string: String): Boolean =
+  def isValidFormat(string: String): Boolean =
     cusipFormat.matches(normalize(string))
 
   def fromParts(

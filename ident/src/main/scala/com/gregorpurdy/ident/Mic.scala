@@ -45,7 +45,7 @@ object Mic extends MicVersionSpecific {
   def isValidFormatStrict(string: String): Boolean =
     MicFormat.matches(string)
 
-  def isValidFormatLoose(string: String): Boolean =
+  def isValidFormat(string: String): Boolean =
     MicFormat.matches(normalize(string))
 
 }

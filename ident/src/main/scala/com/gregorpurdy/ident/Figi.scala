@@ -126,17 +126,20 @@ object Figi extends FigiVersionSpecific {
     isValidCheckDigitFormatStrict(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
-    * 12 and each component is the right mix of letters, digits and/or special characters. The apply() method is more
-    * permissive, because it will trim leading and/or trailing whitespace and convert to uppercase before validating the
-    * CUSIP.
+    * 12 and each component is the right mix of letters, digits and/or special characters. It does enforce provider
+    * exclusions, but it does not validate the check digit.
+    *
+    * [[fromString]] is more permissive, because it will trim leading and/or trailing whitespace and convert to
+    * uppercase before validating the CUSIP.
     */
-  def isValidFigiFormatStrict(string: String): Boolean =
+  def isValidFormatStrict(string: String): Boolean =
     figiFormat.matches(string) && !providerExclusions.contains(string.substring(0, 2))
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
+  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
+    * check digit.
     */
-  def isValidFigiFormatLoose(string: String): Boolean =
-    isValidFigiFormatStrict(normalize(string))
+  def isValidFormat(string: String): Boolean =
+    isValidFormatStrict(normalize(string))
 
   def fromParts(
       provider: String,

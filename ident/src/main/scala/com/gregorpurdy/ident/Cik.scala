@@ -38,7 +38,7 @@ object Cik extends CikVersionSpecific {
   def isValidFormatStrict(string: String): Boolean =
     cikFormat.matches(string)
 
-  def isValidFormatLoose(string: String): Boolean =
+  def isValidFormat(string: String): Boolean =
     cikFormat.matches(string.trim.replaceFirst("^0*", ""))
 
   def fromLong(value: Long): Either[String, Cik] = {

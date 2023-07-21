@@ -105,15 +105,18 @@ object Isin extends IsinVersionSpecific {
     checkDigitFormat.matches(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
-    * 11 and each component is the right mix of letters and/or digits. The apply() method is more permissive, because it
-    * will trim leading and/or trailing whitespace and convert to uppercase before validating the ISIN.
+    * 11 and each component is the right mix of letters and/or digits. It does not validate the check digit.
+    *
+    * [[fromString]] is more permissive, because it will trim leading and/or trailing whitespace and convert to
+    * uppercase before validating the ISIN.
     */
-  def isValidIsinFormatStrict(string: String): Boolean =
+  def isValidFormatStrict(string: String): Boolean =
     isinFormat.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
+  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
+    * check digit.
     */
-  def isValidIsinFormatLoose(string: String): Boolean =
+  def isValidFormat(string: String): Boolean =
     isinFormat.matches(normalize(string))
 
   def fromParts(
