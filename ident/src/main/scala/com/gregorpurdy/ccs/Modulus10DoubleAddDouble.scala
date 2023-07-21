@@ -16,8 +16,8 @@
 
 package com.gregorpurdy.ccs
 
-/** This algorithm has multiple variants for computing _Check Digits_. One ([[CusipVariant]]) is used by [[ident.Cusip]]
-  * and [[ident.Figi]] and the other ([[IsinVariant]]) is used by [[ident.Isin]].
+/** This algorithm has two variants for computing _Check Digits_. One ([[CusipVariant]]) is used by [[ident.Cusip]] and
+  * [[ident.Figi]] and the other ([[IsinVariant]]) is used by [[ident.Isin]].
   *
   * The algorithm is known as "modulus 10 'double-add-double' check digit". The basic idea is to:
   *
@@ -69,6 +69,22 @@ object Modulus10DoubleAddDouble {
   private implicit def int2Byte(i: Int): Byte = i.toByte
 
   /** This variant is used by [[ident.Cusip]] and [[ident.Figi]].
+    *
+    * The values of entries in the [[Evens]] and [[Odds]] tables can be found by evaluating this Mathematica expression
+    * and reading off the values in the "ODD%10" and "EVEN%10" columns:
+    *
+    * ```mathematica
+    * Dataset[Table[<|
+    *     "N" -> n, "N/10" -> Quotient[n, 10],
+    *     "N%10" -> Mod[n, 10],
+    *     "ODD" -> Quotient[n, 10] + Mod[n, 10],
+    *     "ODD%10" -> Mod[Quotient[n, 10] + Mod[n, 10], 10],
+    *     "N*2" -> n*2, "(N*2)/10" -> Quotient[n * 2, 10],
+    *     "(N*2)%10" -> Mod[n * 2, 10],
+    *     "EVEN" -> Quotient[n * 2, 10] + Mod[n * 2, 10],
+    *     "EVEN%10" -> Mod[Quotient[n * 2, 10] + Mod[n * 2, 10], 10]
+    *     |>, {n, 0, 35}]]
+    * ```
     */
   object CusipVariant {
 
