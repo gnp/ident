@@ -89,12 +89,12 @@ object Figi extends FigiVersionSpecific {
         s"Format of id '$id' is not valid"
       )
 
-    calculateCheckDigitUnsafe(tempProvider, tempScope, tempId)
+    calculateCheckDigitInternal(tempProvider, tempScope, tempId)
   }
 
   /** This method is used internally when the base and issue have already been validated to be the right format.
     */
-  private def calculateCheckDigitUnsafe(
+  private def calculateCheckDigitInternal(
       provider: String,
       scope: String,
       id: String
@@ -158,7 +158,7 @@ object Figi extends FigiVersionSpecific {
     else if (!isValidCheckDigitFormatStrict(tempCheckDigit))
       Left(s"Format of check digit '$checkDigit' is not valid")
     else {
-      val correctCheckDigit = calculateCheckDigitUnsafe(provider, scope, id)
+      val correctCheckDigit = calculateCheckDigitInternal(provider, scope, id)
       if (tempCheckDigit != correctCheckDigit)
         Left(
           s"Check digit '$checkDigit' is not correct for provider '$provider', scope '$scope' and id '$id'. It should be '$correctCheckDigit'"
@@ -182,7 +182,7 @@ object Figi extends FigiVersionSpecific {
     else if (!isValidIdFormatStrict(tempId))
       Left(s"Format of id '$id' is not valid")
     else {
-      val correctCheckDigit = calculateCheckDigitUnsafe(provider, scope, id)
+      val correctCheckDigit = calculateCheckDigitInternal(provider, scope, id)
       Right(new Figi(s"$provider$scope$id$correctCheckDigit"))
     }
   }

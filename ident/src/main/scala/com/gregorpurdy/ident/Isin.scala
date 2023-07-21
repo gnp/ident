@@ -67,7 +67,7 @@ object Isin extends IsinVersionSpecific {
     else if (!isValidSecurityIdentifierFormatStrict(tempSecurityIdentifier))
       Left(s"Format of security identifier '$securityIdentifier' is not valid")
     else
-      Right(calculateCheckDigitUnsafe(tempCountryCode, tempSecurityIdentifier))
+      Right(calculateCheckDigitInternal(tempCountryCode, tempSecurityIdentifier))
   }
 
   /** This method is used internally when the `countryCode` and `securityIdentifier` have already been validated to be
@@ -80,8 +80,7 @@ object Isin extends IsinVersionSpecific {
     * @return
     *   the Check Digit (a one-character String)
     */
-  @throws[IllegalStateException]("If encountering an unexpected character")
-  private def calculateCheckDigitUnsafe(
+  private def calculateCheckDigitInternal(
       countryCode: String,
       securityIdentifier: String
   ): String =
@@ -133,7 +132,7 @@ object Isin extends IsinVersionSpecific {
     else if (!isValidCheckDigitFormatStrict(cd))
       Left(s"Format of check digit '$checkDigit' is not valid")
     else {
-      val correctCheckDigit = calculateCheckDigitUnsafe(cc, id)
+      val correctCheckDigit = calculateCheckDigitInternal(cc, id)
 
       if (cd != correctCheckDigit)
         Left(
@@ -155,7 +154,7 @@ object Isin extends IsinVersionSpecific {
     else if (!isValidSecurityIdentifierFormatStrict(id))
       Left(s"Format of security identifier '$securityIdentifier' is not valid")
     else {
-      val cd = calculateCheckDigitUnsafe(cc, id)
+      val cd = calculateCheckDigitInternal(cc, id)
 
       Right(new Isin(s"$cc$id$cd"))
     }

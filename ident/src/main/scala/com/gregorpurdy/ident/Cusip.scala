@@ -188,12 +188,12 @@ object Cusip extends CusipVersionSpecific {
         s"Format of issue '$issue' is not valid"
       )
 
-    calculateCheckDigitUnsafe(base, issue)
+    calculateCheckDigitInternal(base, issue)
   }
 
   /** This method is used internally when the base and issue have already been validated to be the right format.
     */
-  private def calculateCheckDigitUnsafe(
+  private def calculateCheckDigitInternal(
       base: String,
       issue: String
   ): String =
@@ -246,7 +246,7 @@ object Cusip extends CusipVersionSpecific {
     else if (!isValidCheckDigitFormatStrict(tempCheckDigit))
       Left(s"Format of check digit '$checkDigit' is not valid")
     else {
-      val correctCheckDigit = calculateCheckDigitUnsafe(base, issue)
+      val correctCheckDigit = calculateCheckDigitInternal(base, issue)
 
       if (tempCheckDigit != correctCheckDigit)
         Left(
@@ -268,7 +268,7 @@ object Cusip extends CusipVersionSpecific {
     else if (!isValidIssueFormatStrict(tempIssue))
       Left(s"Format of issue '$issue' is not valid")
     else {
-      val correctCheckDigit = calculateCheckDigitUnsafe(base, issue)
+      val correctCheckDigit = calculateCheckDigitInternal(base, issue)
       Right(new Cusip(s"$base$issue$correctCheckDigit"))
     }
   }
