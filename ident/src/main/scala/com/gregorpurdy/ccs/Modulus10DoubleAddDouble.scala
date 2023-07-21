@@ -129,15 +129,12 @@ object Modulus10DoubleAddDouble {
       *   the Check Digit (a one-character String)
       */
     private[ccs] def calculateSimple(payload: String): String = {
-      val l = payload.size
       var sum: Byte = 0
-      for (i <- 0 until l) {
+      for (i <- payload.size - 1 to 0 by -1) {
         val v = charValue(payload(i))
         val vv = if (i % 2 == 1) v * 2 else v
         // Cannot trigger on input < 9 characters long because floor((127 - 14) / 14) = 8.
-        if (sum > MaxAccumSimple) {
-          sum %= 10
-        }
+        if (sum > MaxAccumSimple) sum %= 10
         sum += (vv / 10) + (vv % 10)
       }
       val digit = (10 - (sum % 10)) % 10
@@ -169,16 +166,12 @@ object Modulus10DoubleAddDouble {
 // format: on
 
     def calculate(payload: String): String = {
-      val length = payload.size
-      // val parity = length % 2
       var sum: Byte = 0
-      for (i <- 0 until length) {
+      for (i <- 0 until payload.size) {
         val v = charValue(payload(i))
         val vv = if (i % 2 == 1) Evens(v) else Odds(v)
         // Cannot trigger on input < 14 characters long because floor((127 - 9) / 9) = 13.
-        if (sum > MaxAccumTable) {
-          sum %= 10
-        }
+        if (sum > MaxAccumTable) sum %= 10
         sum += vv
       }
       val digit = (10 - (sum % 10)) % 10
@@ -291,24 +284,15 @@ object Modulus10DoubleAddDouble {
       for (c <- s.reverseIterator) {
         val v = charValue(c)
         val w = Widths(v)
-        val x = if ((idx % 2) == 0) Evens(v) else Odds(v)
+        val x = if (idx % 2 == 0) Evens(v) else Odds(v)
         // Cannot trigger on input < 28 bytes long because floor((255 - 9)/9) = 27. Not performing
         // mod every iteration seems to save a few percent on run time.
-        if (sum > MaxAccumTable) {
-          sum %= 10
-        }
+        if (sum > MaxAccumTable) sum %= 10
         sum += x
         idx += w
       }
-      sum %= 10
-
-      val diff = 10 - sum
-      val temp = if (diff == 10) {
-        0
-      } else {
-        diff
-      }
-      temp.toString
+      val digit = (10 - (sum % 10)) % 10
+      digit.toString
     }
 
   }
