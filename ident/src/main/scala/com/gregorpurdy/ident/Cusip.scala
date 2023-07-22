@@ -166,56 +166,133 @@ final case class Cusip private (value: String) {
 
 object Cusip extends CusipVersionSpecific {
 
-  val baseFormat: Regex = "[A-Z0-9]{6}".r
+  val issuerFormat: Regex = "[A-Z0-9]{6}".r
   val issueFormat: Regex = "[A-Z0-9]{2}".r
+  val payloadFormat: Regex = "[A-Z0-9]{8}".r
   val checkDigitFormat: Regex = "[0-9]".r
   val cusipFormat: Regex = "([A-Z0-9]{6})([A-Z0-9]{2})([0-9])".r
 
-  def calculateCheckDigit(
-      base: String,
+  def calculateCheckDigitFromParts(
+      issuer: String,
       issue: String
   ): String = {
-    val tempBase = normalize(base)
+    val tempIssuer = normalize(issuer)
     val tempIssue = normalize(issue)
 
-    if (!isValidBaseFormatStrict(tempBase))
+    if (!isValidIssuerFormatStrict(tempIssuer))
       throw new IllegalArgumentException(
-        s"Format of base code '$base' is not valid"
+        s"Format of Issuer '$issuer' is not valid"
       )
 
     if (!isValidIssueFormatStrict(tempIssue))
       throw new IllegalArgumentException(
-        s"Format of issue '$issue' is not valid"
+        s"Format of Issue '$issue' is not valid"
       )
 
-    calculateCheckDigitInternal(base, issue)
+    calculateCheckDigitFromPartsInternal(issuer, issue)
   }
 
   /** This method is used internally when the base and issue have already been validated to be the right format.
     */
-  private def calculateCheckDigitInternal(
-      base: String,
+  private def calculateCheckDigitFromPartsInternal(
+      issuer: String,
       issue: String
   ): String =
-    Modulus10DoubleAddDouble.CusipVariant.calculate(s"$base$issue")
+    calculateCheckDigitFromPayloadInternal(s"$issuer$issue")
 
-  def isValidBaseFormatStrict(string: String): Boolean =
-    baseFormat.matches(string)
+  def calculateCheckDigitFromPayload(
+      payload: String
+  ): String = {
+    val tempPayload = normalize(payload)
 
-  def isValidBaseFormatLoose(string: String): Boolean =
-    baseFormat.matches(normalize(string))
+    if (!isValidPayloadFormatStrict(tempPayload))
+      throw new IllegalArgumentException(
+        s"Format of payload '$payload' is not valid"
+      )
 
-  def isValidIssueFormatStrict(string: String): Boolean =
-    issueFormat.matches(string)
+    calculateCheckDigitFromPayloadInternal(payload)
+  }
 
-  def isValidIssueFormatLoose(string: String): Boolean =
-    issueFormat.matches(normalize(string))
+  /** This method is used internally when the payload has already been validated to be the right format.
+    */
+  private def calculateCheckDigitFromPayloadInternal(
+      payload: String
+  ): String =
+    Modulus10DoubleAddDouble.CusipVariant.calculate(payload)
+
+  def fromParts(
+      issuer: String,
+      issue: String,
+      checkDigit: String
+  ): Either[String, Cusip] = {
+    val tempIssuer = normalize(issuer)
+    val tempIssue = normalize(issue)
+    val tempCheckDigit = normalize(checkDigit)
+
+    if (!isValidIssuerFormatStrict(tempIssuer))
+      Left(s"Format of issuer '$issuer' is not valid")
+    else if (!isValidIssueFormatStrict(tempIssue))
+      Left(s"Format of issue '$issue' is not valid")
+    else if (!isValidCheckDigitFormatStrict(tempCheckDigit))
+      Left(s"Format of check digit '$checkDigit' is not valid")
+    else {
+      val correctCheckDigit = calculateCheckDigitFromPartsInternal(issuer, issue)
+
+      if (tempCheckDigit != correctCheckDigit)
+        Left(
+          s"Check digit '$checkDigit' is not correct for issuer '$issuer' and issue '$issue'. It should be '$correctCheckDigit'"
+        )
+      else
+        Right(new Cusip(s"$issuer$issue$tempCheckDigit"))
+    }
+  }
+
+  /** Create a CUSIP from an issuer and an issue, computing the correct check digit automatically.
+    */
+  def fromPartsCalcCheckDigit(issuer: String, issue: String): Either[String, Cusip] = {
+    val tempIssuer = normalize(issuer)
+    val tempIssue = normalize(issue)
+
+    if (!isValidIssuerFormatStrict(tempIssuer))
+      Left(s"Format of issuer '$issue' is not valid")
+    else if (!isValidIssueFormatStrict(tempIssue))
+      Left(s"Format of issue '$issue' is not valid")
+    else {
+      val correctCheckDigit = calculateCheckDigitFromPartsInternal(issuer, issue)
+      Right(new Cusip(s"$issuer$issue$correctCheckDigit"))
+    }
+  }
+
+  def fromPayloadCalcCheckDigit(payload: String): Either[String, Cusip] = {
+    val tempPayload = normalize(payload)
+    if (!isValidPayloadFormatStrict(tempPayload))
+      Left(s"Format of payload '$payload' is not valid")
+    else {
+      val correctCheckDigit = calculateCheckDigitFromPayloadInternal(payload)
+      Right(new Cusip(s"$payload$correctCheckDigit"))
+    }
+
+  }
+
+  def fromString(value: String): Either[String, Cusip] =
+    normalize(value) match {
+      case cusipFormat(issuer, issue, checkDigit) =>
+        fromParts(issuer, issue, checkDigit)
+      case _ =>
+        Left(s"Input string is not in valid CUSIP format: '$value'")
+    }
+
+  def isValidCheckDigitFormat(string: String): Boolean =
+    checkDigitFormat.matches(normalize(string))
 
   def isValidCheckDigitFormatStrict(string: String): Boolean =
     checkDigitFormat.matches(string)
 
-  def isValidCheckDigitFormatLoose(string: String): Boolean =
-    checkDigitFormat.matches(normalize(string))
+  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
+    * check digit.
+    */
+  def isValidFormat(string: String): Boolean =
+    cusipFormat.matches(normalize(string))
 
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 9 and each component is the right mix of letters, digits and/or special characters. It does not validate the check
@@ -227,61 +304,22 @@ object Cusip extends CusipVersionSpecific {
   def isValidFormatStrict(string: String): Boolean =
     cusipFormat.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
-    * check digit.
-    */
-  def isValidFormat(string: String): Boolean =
-    cusipFormat.matches(normalize(string))
+  def isValidIssueFormat(string: String): Boolean =
+    issueFormat.matches(normalize(string))
 
-  def fromParts(
-      base: String,
-      issue: String,
-      checkDigit: String
-  ): Either[String, Cusip] = {
-    val tempBase = normalize(base)
-    val tempIssue = normalize(issue)
-    val tempCheckDigit = normalize(checkDigit)
+  def isValidIssueFormatStrict(string: String): Boolean =
+    issueFormat.matches(string)
 
-    if (!isValidBaseFormatStrict(tempBase))
-      Left(s"Format of base '$base' is not valid")
-    else if (!isValidIssueFormatStrict(tempIssue))
-      Left(s"Format of issue '$issue' is not valid")
-    else if (!isValidCheckDigitFormatStrict(tempCheckDigit))
-      Left(s"Format of check digit '$checkDigit' is not valid")
-    else {
-      val correctCheckDigit = calculateCheckDigitInternal(base, issue)
+  def isValidIssuerFormat(string: String): Boolean =
+    issuerFormat.matches(normalize(string))
 
-      if (tempCheckDigit != correctCheckDigit)
-        Left(
-          s"Check digit '$checkDigit' is not correct for base '$base' and issue '$issue'. It should be '$correctCheckDigit'"
-        )
-      else
-        Right(new Cusip(s"$base$issue$tempCheckDigit"))
-    }
-  }
+  def isValidIssuerFormatStrict(string: String): Boolean =
+    issuerFormat.matches(string)
 
-  /** Create a CUSIP from a base and issue, computing the correct check digit automatically.
-    */
-  def fromPartsCalcCheckDigit(base: String, issue: String): Either[String, Cusip] = {
-    val tempBase = normalize(base)
-    val tempIssue = normalize(issue)
+  def isValidPayloadFormat(string: String): Boolean =
+    payloadFormat.matches(normalize(string))
 
-    if (!isValidBaseFormatStrict(tempBase))
-      Left(s"Format of base '$base' is not valid")
-    else if (!isValidIssueFormatStrict(tempIssue))
-      Left(s"Format of issue '$issue' is not valid")
-    else {
-      val correctCheckDigit = calculateCheckDigitInternal(base, issue)
-      Right(new Cusip(s"$base$issue$correctCheckDigit"))
-    }
-  }
-
-  def fromString(value: String): Either[String, Cusip] =
-    normalize(value) match {
-      case cusipFormat(base, issue, checkDigit) =>
-        fromParts(base, issue, checkDigit)
-      case _ =>
-        Left(s"Input string is not in valid CUSIP format: '$value'")
-    }
+  def isValidPayloadFormatStrict(string: String): Boolean =
+    payloadFormat.matches(string)
 
 }
