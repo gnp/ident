@@ -30,7 +30,7 @@ class Modulus10DoubleAddDoubleBench {
 
   val cases = Unsafe
     .unsafe { implicit unsafe =>
-      zio.Runtime.default.unsafe
+      Runtime.default.unsafe
         .run(
           effect.provideLayer(TestRandom.deterministic)
         )
