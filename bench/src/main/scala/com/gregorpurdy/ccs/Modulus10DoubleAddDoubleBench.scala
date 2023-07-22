@@ -37,11 +37,11 @@ class Modulus10DoubleAddDoubleBench {
         .getOrThrowFiberFailure()
     }
 
-  @Benchmark def cusipCalculate: Unit = for (_ <- 1 to iterations) {
+  @Benchmark def cusipCalculate(): Unit = for (_ <- 1 to iterations) {
     cases.foreach(input => Modulus10DoubleAddDouble.CusipVariant.calculate(input))
   }
 
-  @Benchmark def cusipCalculateSimple: Unit = for (_ <- 1 to iterations) {
+  @Benchmark def cusipCalculateSimple(): Unit = for (_ <- 1 to iterations) {
     cases.foreach(input => Modulus10DoubleAddDouble.CusipVariant.calculateSimple(input))
   }
 
