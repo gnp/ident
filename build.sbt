@@ -48,6 +48,7 @@ addCommandAlias(
 )
 
 val stdCompilerOptions2 = Seq(
+  "-Ytasty-reader",
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
   "utf-8", // Specify character encoding used by source files.
