@@ -76,8 +76,8 @@ object Modulus10DoubleAddDouble {
 
   /** This variant is used by [[ident.Cusip]] and [[ident.Figi]].
     *
-    * The values of entries in the [[Evens]] and [[Odds]] tables can be found by evaluating this Mathematica expression
-    * and reading off the values in the "ODD%10" and "EVEN%10" columns:
+    * The values of entries in the `Evens` and `Odds` tables can be found by evaluating this Mathematica expression and
+    * reading off the values in the "ODD%10" and "EVEN%10" columns:
     *
     * ```mathematica
     * Dataset[Table[<|
