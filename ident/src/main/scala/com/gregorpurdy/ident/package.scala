@@ -18,6 +18,8 @@ package com.gregorpurdy
 
 package object ident {
 
-  def normalize(s: String) = s.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
+  private val ContiguousWhitespace: String = """(\h|\v)+"""
+
+  def normalize(s: String) = s.replaceAll(ContiguousWhitespace, " ").trim.toUpperCase
 
 }
