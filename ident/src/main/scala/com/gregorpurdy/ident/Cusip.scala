@@ -169,7 +169,7 @@ object Cusip extends CusipVersionSpecific {
   val baseFormat: Regex = "[A-Z0-9]{6}".r
   val issueFormat: Regex = "[A-Z0-9]{2}".r
   val checkDigitFormat: Regex = "[0-9]".r
-  val cusipFormat: Regex = "([A-Z0-9*@#]{6})([A-Z0-9*@#]{2})([0-9])".r
+  val cusipFormat: Regex = "([A-Z0-9]{6})([A-Z0-9]{2})([0-9])".r
 
   def calculateCheckDigit(
       base: String,
