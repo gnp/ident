@@ -118,6 +118,7 @@ lazy val root = (project in file("."))
     identZioConfig,
     identZioJson,
     identZioSchema,
+    bench,
     examples
   )
   .settings(
