@@ -125,7 +125,7 @@ final case class Cusip private (value: String) {
     *   restriction that it *does* use 'I', 'O' or 'Z' as its country code), false otherwise.
     *
     * @see
-    *   [[isCins]] and [[isCinsExtended]].
+    *   [[isCins]] and [[isCinsBase]].
     */
   def isCinsExtended: Boolean = value(0) match {
     case c if (c >= '0') && (c <= '9') => false
