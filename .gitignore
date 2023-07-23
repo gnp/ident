@@ -1,6 +1,7 @@
 .bloop
 .bsp
 .metals
+.scala-build
 .vscode
 /project/metals.sbt
 /project/project
