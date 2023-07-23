@@ -71,11 +71,20 @@ object Modulus10DoubleAddDoubleSpec extends ZIOSpecDefault {
         assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
       }
     },
-    test("IsinVariant on length 1-100 payloads") {
+    test("IsinVariant on length 1-100 payloads [Uppercase]") {
       check(Gen.alphaNumericStringBounded(1, 100)) { s =>
         val payload = s.toUpperCase
         assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
       }
+    },
+    test("IsinVariant on length 1-100 payloads [Mixed Case]") {
+      check(Gen.alphaNumericStringBounded(1, 100)) { s =>
+        val payload = s.toLowerCase
+        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
+      }
+    },
+    test("charValue should return zero for non-alphanumeric characters") {
+      assert(charValue('#'))(isZero)
     }
   )
 
