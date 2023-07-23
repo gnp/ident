@@ -36,7 +36,7 @@ object IdentCirceSpec extends ZIOSpecDefault {
     test("Correctly fail to parse an invalid JSON") {
       val expected: Either[String, Isin] =
         Left("DecodingFailure at : Got value '53' with wrong type, expecting string")
-      val result = decode[Isin]("53").swap.map(_.getMessage).swap
+      val result = decode[Isin]("53").left.map(_.getMessage)
 
       assert(result)(equalTo(expected))
     }

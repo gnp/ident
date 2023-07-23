@@ -21,7 +21,7 @@ import zio.Config
 object IdentZioConfig {
 
   implicit val cikConfig: Config[Cik] =
-    Config.string.mapOrFail[Cik](s => Cik.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Cik](s => Cik.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
   implicit val cusipConfig: Config[Cusip] =
     Config.string.mapOrFail[Cusip](s =>
@@ -29,15 +29,15 @@ object IdentZioConfig {
     )
 
   implicit val figiConfig: Config[Figi] =
-    Config.string.mapOrFail[Figi](s => Figi.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Figi](s => Figi.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
   implicit val isinConfig: Config[Isin] =
-    Config.string.mapOrFail[Isin](s => Isin.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Isin](s => Isin.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
   implicit val leiConfig: Config[Lei] =
-    Config.string.mapOrFail[Lei](s => Lei.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Lei](s => Lei.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
   implicit val micConfig: Config[Mic] =
-    Config.string.mapOrFail[Mic](s => Mic.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Mic](s => Mic.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
 }
