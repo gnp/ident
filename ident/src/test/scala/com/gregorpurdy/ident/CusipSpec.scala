@@ -12,8 +12,28 @@ object CusipSpec extends ZIOSpecDefault {
   val checkDigit = "0"
 
   def spec: Spec[Any, Any] = suite("CusipSpec")(
-    // test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
-
+    test("Correctly validate the AAPL CUSIP Issuer number") {
+      val result = Cusip.validateIssuerFormat(issuerNumber)
+      assert(result)(isRight(equalTo(issuerNumber)))
+    },
+    test("Correctly validate the AAPL CUSIP Issue number") {
+      val result = Cusip.validateIssueFormat(issueNumber)
+      assert(result)(isRight(equalTo(issueNumber)))
+    },
+    test("Correctly validate the AAPL CUSIP Check Digit") {
+      val result = Cusip.validateCheckDigitFormat(checkDigit)
+      assert(result)(isRight(equalTo(checkDigit)))
+    },
+    test("Correctly return an error when validating Check Digit '1' for Issuer '111111' and Issue '11'") {
+      val expected = CusipError.IncorrectCheckDigitValue("1", "8", "111111", "11")
+      val result = Cusip.validateCheckDigitForPartsInternal("111111", "11", "1")
+      assert(result)(isLeft(equalTo(expected)))
+    },
+    test("Correctly return an error when parsing '111111111'") {
+      val expected = CusipError.IncorrectCheckDigitValue("1", "8", "111111", "11")
+      val result = Cusip.fromString("111111111")
+      assert(result)(isLeft(equalTo(expected)))
+    },
     test("Correctly parse and validate the example AAPL CUSIP") {
       val cusip = Cusip.fromString(cusipString).toOption.get
 
@@ -36,10 +56,12 @@ object CusipSpec extends ZIOSpecDefault {
       assert(cusip.toStringTagged)(equalTo(s"cusip:$cusipString"))
     },
     test("Correctly compute the check digit for the AAPL CUSIP") {
-      val cusip = Cusip.fromPartsCalcCheckDigit(issuerNumber, issueNumber).toOption.get
-
-      assert(cusip.value)(equalTo(cusipString))
-      assert(cusip.checkDigit)(equalTo(checkDigit))
+      val result = Cusip.fromPayloadParts(issuerNumber, issueNumber)
+      assert(result)(isRight(anything))
+      result.map { case cusip @ Cusip(_) =>
+        assert(cusip.value)(equalTo(cusipString))
+        assert(cusip.checkDigit)(equalTo(checkDigit))
+      }
     },
     test("Correctly validate the check digit for AAPL from the isin.org web site") {
       val cusip = Cusip.fromParts(issuerNumber, issueNumber, checkDigit).toOption.get

@@ -101,7 +101,9 @@ object IdentZioSchema {
     *   This is intended to be replaced as the
     */
   implicit val cusipZioSchema: Schema[Cusip] =
-    Schema.primitive[String].transformOrFail(value => Cusip.fromString(value), ident => Right(ident.value))
+    Schema
+      .primitive[String]
+      .transformOrFail(value => Cusip.fromString(value).left.map(_.toString), ident => Right(ident.value))
 
   /** Transcodes between String and Figi */
   implicit val figiZioSchema: Schema[Figi] =

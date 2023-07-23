@@ -24,7 +24,9 @@ object IdentZioConfig {
     Config.string.mapOrFail[Cik](s => Cik.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
 
   implicit val cusipConfig: Config[Cusip] =
-    Config.string.mapOrFail[Cusip](s => Cusip.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)
+    Config.string.mapOrFail[Cusip](s =>
+      Cusip.fromString(s).left.map(e => Config.Error.InvalidData(message = e.toString))
+    )
 
   implicit val figiConfig: Config[Figi] =
     Config.string.mapOrFail[Figi](s => Figi.fromString(s).swap.map(e => Config.Error.InvalidData(message = e)).swap)

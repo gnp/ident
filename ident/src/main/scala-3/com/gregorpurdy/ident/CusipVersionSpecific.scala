@@ -24,7 +24,7 @@ abstract class CusipVersionSpecific {
 
   object CusipCommandLineParserFromString extends CommandLineParser.FromString[Cusip] {
     def fromString(s: String): Cusip = Cusip.fromString(s) match {
-      case Left(s)      => throw new IllegalArgumentException(s)
+      case Left(err)    => throw new IllegalArgumentException(err.toString)
       case Right(ident) => ident
     }
     override def fromStringOption(s: String): Option[Cusip] = Cusip.fromString(s).toOption
