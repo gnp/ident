@@ -92,10 +92,10 @@ libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "@VERSION@"
 
 ## JSON
 
-You can use the `isin-circe` or `isin-zio-json` artifacts to get JSON encoders
-and decoders for ISINs.
+You can use the `ident-circe` or `ident-zio-json` artifacts to get JSON encoders
+and decoders for supported identifiers.
 
-You can also use the `isin-zio-schema` artifact to get generic ZIO Schema
+You can also use the `ident-zio-schema` artifact to get generic ZIO Schema
 support, which includes support for JSON and other formats as well as other
 functionality.
 
