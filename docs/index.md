@@ -107,6 +107,21 @@ The _tools_ directory contains [Scala CLI](https://scala-cli.virtuslab.org/insta
 * _cusip-tool.cs_: Reads CUSIPs from standard input ( one per line) and validates them. Includes a `--fix` mode that writes them back to standard output with corrected check digits.
 
 
+## Identifier Component Terminology
+
+These terms appear in the APIs and documentation:
+
+* **Check Character(s)**: The general term for one or more characters computed from the _Parts_ (equivalently from the _Payload_), used as an integrity check.
+
+* **Check Digit(s)**: The specific term when the _Check Character(s)_ are taken from the set of decimal digits.
+
+* **Parts**: For an identifier format with multiple fields, we use the term "Parts" to mean the sequence of all these fields, including any _Check Characters_.
+
+* **Payload**: The value from which the _Check Character(s)_ are computed. Typically, the concatenation of the _Payload Parts_.
+
+* **Payload Parts**: The sub-sequence of the _Parts_ that excludes any _Check Characters_.
+
+
 ## License
 
 Licensed under Apache License, Version 2.0 ([LICENSE-APACHE][LICENSE-APACHE] or
