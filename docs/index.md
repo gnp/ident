@@ -102,9 +102,13 @@ functionality.
 
 ## Tools
 
-The _tools_ directory contains [Scala CLI](https://scala-cli.virtuslab.org/install/) scripts for working with identifiers on the command line:
+The _tools_ directory contains [Scala
+CLI](https://scala-cli.virtuslab.org/install/) scripts for working with
+identifiers on the command line:
 
-* _cusip-tool.cs_: Reads CUSIPs from standard input ( one per line) and validates them. Includes a `--fix` mode that writes them back to standard output with corrected check digits.
+* _cusip-tool.cs_: Reads CUSIPs from standard input (one per line) and validates
+  them. Includes a `--fix` mode that writes them back to standard output with
+  corrected check digits.
 
 
 ## Identifier Component Terminology
