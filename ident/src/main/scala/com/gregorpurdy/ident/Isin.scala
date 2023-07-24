@@ -31,9 +31,9 @@ import scala.util.matching.Regex
   *   https://en.wikipedia.org/wiki/International_Securities_Identification_Number
   */
 final case class Isin private (value: String) {
+  def checkDigit: String = value.substring(11, 12)
   def countryCode: String = value.substring(0, 2)
   def securityIdentifier: String = value.substring(2, 11)
-  def checkDigit: String = value.substring(11, 12)
   override def toString(): String = value
   def toStringTagged: String = s"isin:$value"
 }
@@ -86,39 +86,6 @@ object Isin extends IsinVersionSpecific {
   ): String =
     Modulus10DoubleAddDouble.IsinVariant.calculate(s"$countryCode$securityIdentifier")
 
-  def isValidCountryCodeFormatStrict(string: String): Boolean =
-    countryCodeFormat.matches(string)
-
-  def isValidCountryCodeFormatLoose(string: String): Boolean =
-    countryCodeFormat.matches(normalize(string))
-
-  def isValidSecurityIdentifierFormatStrict(string: String): Boolean =
-    securityIdentifierFormat.matches(string)
-
-  def isValidSecurityIdentifierFormatLoose(string: String): Boolean =
-    securityIdentifierFormat.matches(normalize(string))
-
-  def isValidCheckDigitFormatStrict(string: String): Boolean =
-    checkDigitFormat.matches(string)
-
-  def isValidCheckDigitFormatLoose(string: String): Boolean =
-    checkDigitFormat.matches(normalize(string))
-
-  /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
-    * 11 and each component is the right mix of letters and/or digits. It does not validate the check digit.
-    *
-    * [[fromString]] is more permissive, because it will trim leading and/or trailing whitespace and convert to
-    * uppercase before validating the ISIN.
-    */
-  def isValidFormatStrict(string: String): Boolean =
-    isinFormat.matches(string)
-
-  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
-    * check digit.
-    */
-  def isValidFormat(string: String): Boolean =
-    isinFormat.matches(normalize(string))
-
   def fromParts(
       countryCode: String,
       securityIdentifier: String,
@@ -170,5 +137,38 @@ object Isin extends IsinVersionSpecific {
       case _ =>
         Left(s"Input string is not in valid ISIN format: '$value'")
     }
+
+  def isValidCheckDigitFormatStrict(string: String): Boolean =
+    checkDigitFormat.matches(string)
+
+  def isValidCheckDigitFormatLoose(string: String): Boolean =
+    checkDigitFormat.matches(normalize(string))
+
+  def isValidCountryCodeFormatStrict(string: String): Boolean =
+    countryCodeFormat.matches(string)
+
+  def isValidCountryCodeFormatLoose(string: String): Boolean =
+    countryCodeFormat.matches(normalize(string))
+
+  /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
+    * 11 and each component is the right mix of letters and/or digits. It does not validate the check digit.
+    *
+    * [[fromString]] is more permissive, because it will trim leading and/or trailing whitespace and convert to
+    * uppercase before validating the ISIN.
+    */
+  def isValidFormatStrict(string: String): Boolean =
+    isinFormat.matches(string)
+
+  /** This returns true if the input String would be allowed as an argument to [[fromString]]. It does not validate the
+    * check digit.
+    */
+  def isValidFormat(string: String): Boolean =
+    isinFormat.matches(normalize(string))
+
+  def isValidSecurityIdentifierFormatStrict(string: String): Boolean =
+    securityIdentifierFormat.matches(string)
+
+  def isValidSecurityIdentifierFormatLoose(string: String): Boolean =
+    securityIdentifierFormat.matches(normalize(string))
 
 }
