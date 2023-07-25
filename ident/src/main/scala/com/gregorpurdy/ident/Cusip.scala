@@ -168,7 +168,7 @@ sealed trait CusipError
 object CusipError {
   case class IncorrectCheckDigitValue(was: String, expected: String, issuer: String, issue: String) extends CusipError {
     override def toString(): String =
-      s"Check digit '$was' is not correct for CUSIP Issuer '$issuer' and Issue '$issue'. It should be '$expected'."
+      s"Check Digit '$was' is not correct for CUSIP Issuer '$issuer' and Issue '$issue'. It should be '$expected'."
   }
   case class InvalidCheckDigitFormat(was: String) extends CusipError {
     override def toString(): String = s"Format of Check Digit '$was' is not valid for CUSIP."
