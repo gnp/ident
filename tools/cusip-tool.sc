@@ -36,7 +36,7 @@ val fix: Boolean = if (args.length == 0) {
 } else if (args.length == 1 && args(0) == "--fix") {
   true
 } else {
-  die("usage: cusip-tool [--fix]]", 1)
+  die("usage: cusip-tool.sc [--fix]]", 1)
 }
 
 var good: Long = 0L
