@@ -32,7 +32,7 @@ object IdentZioConfig {
     Config.string.mapOrFail[Figi](s => Figi.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
 
   implicit val isinConfig: Config[Isin] =
-    Config.string.mapOrFail[Isin](s => Isin.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))
+    Config.string.mapOrFail[Isin](s => Isin.fromString(s).left.map(e => Config.Error.InvalidData(message = e.toString)))
 
   implicit val leiConfig: Config[Lei] =
     Config.string.mapOrFail[Lei](s => Lei.fromString(s).left.map(e => Config.Error.InvalidData(message = e)))

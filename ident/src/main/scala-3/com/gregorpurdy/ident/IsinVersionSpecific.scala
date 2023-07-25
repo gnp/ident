@@ -24,7 +24,7 @@ abstract class IsinVersionSpecific {
 
   object IsinCommandLineParserFromString extends CommandLineParser.FromString[Isin] {
     def fromString(s: String): Isin = Isin.fromString(s) match {
-      case Left(s)      => throw new IllegalArgumentException(s)
+      case Left(s)      => throw new IllegalArgumentException(s.toString)
       case Right(ident) => ident
     }
     override def fromStringOption(s: String): Option[Isin] = Isin.fromString(s).toOption

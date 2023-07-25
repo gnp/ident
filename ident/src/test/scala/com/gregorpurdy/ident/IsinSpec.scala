@@ -37,12 +37,14 @@ object IsinSpec extends ZIOSpecDefault {
       assert(isin.checkDigit)(equalTo(checkDigit))
     },
     test("Correctly compute the check digit for AAPL from the isin.org web site") {
-      val isin = Isin.fromPartsCalcCheckDigit(countryCode, securityIdentifier).toOption.get
-
-      assert(isin.value)(equalTo(isinString))
-      assert(isin.countryCode)(equalTo(countryCode))
-      assert(isin.securityIdentifier)(equalTo(securityIdentifier))
-      assert(isin.checkDigit)(equalTo(checkDigit))
+      val result = Isin.fromPayloadParts(countryCode, securityIdentifier)
+      assert(result)(isRight(anything))
+      result.map { case isin @ Isin(_) =>
+        assert(isin.value)(equalTo(isinString))
+        assert(isin.countryCode)(equalTo(countryCode))
+        assert(isin.securityIdentifier)(equalTo(securityIdentifier))
+        assert(isin.checkDigit)(equalTo(checkDigit))
+      }
     },
     test("Correctly validate the check digit for AAPL from the isin.org web site") {
       val isin = Isin.fromParts(countryCode, securityIdentifier, checkDigit).toOption.get

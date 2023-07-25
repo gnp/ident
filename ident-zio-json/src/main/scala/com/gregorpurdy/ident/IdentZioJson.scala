@@ -31,7 +31,8 @@ object IdentZioJson {
   implicit val figiZioJsonDecoder: JsonDecoder[Figi] = JsonDecoder[String].mapOrFail(Figi.fromString)
   implicit val figiZioJsonEncoder: JsonEncoder[Figi] = JsonEncoder[String].contramap(_.value)
 
-  implicit val isinZioJsonDecoder: JsonDecoder[Isin] = JsonDecoder[String].mapOrFail(Isin.fromString)
+  implicit val isinZioJsonDecoder: JsonDecoder[Isin] =
+    JsonDecoder[String].mapOrFail(s => Isin.fromString(s).left.map(_.toString))
   implicit val isinZioJsonEncoder: JsonEncoder[Isin] = JsonEncoder[String].contramap(_.value)
 
   implicit val leiZioJsonDecoder: JsonDecoder[Lei] = JsonDecoder[String].mapOrFail(Lei.fromString)

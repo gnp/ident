@@ -111,7 +111,9 @@ object IdentZioSchema {
 
   /** Transcodes bretween String and Isin */
   implicit val isinZioSchema: Schema[Isin] =
-    Schema.primitive[String].transformOrFail(value => Isin.fromString(value), ident => Right(ident.value))
+    Schema
+      .primitive[String]
+      .transformOrFail(value => Isin.fromString(value).left.map(_.toString), ident => Right(ident.value))
 
   /** Transcodes between String and Lei */
   implicit val leiZioSchema: Schema[Lei] =
