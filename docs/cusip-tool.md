@@ -1,8 +1,9 @@
 # CUSIP Tool
 
-`cusip-tool` reads potential CUSIPs from stdin, one per line, and parses them. It will panic
-if any fail to parse. This can be used as a simple bulk test of a file of purported CUSIPs to
-ensure there are no malformed entries present.
+`cusip-tool.sc` (in the _tools_ directory) reads potential CUSIPs from stdin,
+one per line, and parses them. It will panic if any fail to parse. This can be
+used as a simple bulk test of a file of purported CUSIPs to ensure there are no
+malformed entries present.
 
 As part of the `Cusip` type's implementation validation, this tool was run on a file of 1,591,249
 unique CUSIPs produced by processing a file mapping LEIs to ISINs obtained from GLEIF. The
