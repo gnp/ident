@@ -45,14 +45,6 @@ package com.gregorpurdy.ccs
   * The simpler private versions are used internally for tests and as a comparison for performance benchmarks. They are
   * more expensive than the table-driven style but are easier to understand. These implementations map directly to the
   * descriptions in the Scaladoc, where the table-driven ones do not.
-  *
-  * @todo
-  *   Update the next paragraph
-  *
-  * Benchmarking shows the table-driven implementation to be around 100 times faster than the functional style (on the
-  * test system, average run time decreases from around 2,015 ns with the functional style to around 19 ns with the
-  * table-driven style). Input-dependent variability in run time decreases also from about +/- 14% for the
-  * functional-style to about +/- 3% for the table-driven style.
   */
 object Modulus10DoubleAddDouble {
 
