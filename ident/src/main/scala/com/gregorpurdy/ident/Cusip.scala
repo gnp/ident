@@ -293,13 +293,6 @@ object Cusip extends CusipVersionSpecific {
     new Cusip(s"$payload$checkDigit")
   }
 
-  /** Create a [[Cusip]] from a payload that combines an _Issuer_ and an _Issue_, computing the correct _Check Digit_
-    * automatically.
-    */
-  def fromPayloadStrict(payload: String): Either[CusipError, Cusip] = for {
-    payload <- validatePayloadFormat(payload)
-  } yield fromPayloadInternal(payload)
-
   /** Create a [[Cusip]] from an _Issuer_ and an _Issue_, computing the correct _Check Digit_ automatically.
     */
   def fromPayloadParts(issuer: String, issue: String): Either[CusipError, Cusip] = for {
@@ -319,6 +312,13 @@ object Cusip extends CusipVersionSpecific {
     issuer <- validateIssuerFormatStrict(issuer)
     issue <- validateIssueFormatStrict(issue)
   } yield fromPayloadPartsInternal(issuer, issue)
+
+  /** Create a [[Cusip]] from a payload that combines an _Issuer_ and an _Issue_, computing the correct _Check Digit_
+    * automatically.
+    */
+  def fromPayloadStrict(payload: String): Either[CusipError, Cusip] = for {
+    payload <- validatePayloadFormatStrict(payload)
+  } yield fromPayloadInternal(payload)
 
   def fromString(value: String): Either[CusipError, Cusip] =
     normalize(value) match {
