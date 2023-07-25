@@ -1,4 +1,4 @@
-# cusip-tool
+# CUSIP Tool
 
 `cusip-tool` reads potential CUSIPs from stdin, one per line, and parses them. It will panic
 if any fail to parse. This can be used as a simple bulk test of a file of purported CUSIPs to
