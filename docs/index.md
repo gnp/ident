@@ -19,7 +19,8 @@ which it takes its name. The standard is [available for purchase from the ANSI
 Store](https://webstore.ansi.org/standards/ascx9/ansix92020).
 
 * **FIGI**: A [Financial Instrument Global
-Identifier](https://www.openfigi.com/about/figi) (FIGI).
+Identifier](https://www.openfigi.com/about/figi) (FIGI). The specification is
+[available for download](https://www.omg.org/spec/FIGI) from OMG.
 
 * **ISIN**: International Security Identifiers (ISINs) as defined in [ISO
 6166:2021 Financial services — International securities identification number
