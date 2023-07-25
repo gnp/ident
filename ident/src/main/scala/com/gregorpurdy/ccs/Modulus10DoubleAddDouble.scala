@@ -16,7 +16,10 @@
 
 package com.gregorpurdy.ccs
 
-/** This algorithm has two variants for computing _Check Digits_. One ([[CusipVariant]]) is used by [[ident.Cusip]] and
+/** The basis for this algorithm is Hans P. Luhn's 1960 patent "Computer for Verifying Numbers", [available for free
+  * download](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/2950048 ) from the USPTO.
+  *
+  * This algorithm has two variants for computing _Check Digits_. One ([[CusipVariant]]) is used by [[ident.Cusip]] and
   * [[ident.Figi]] and the other ([[IsinVariant]]) is used by [[ident.Isin]].
   *
   * The algorithm is known as "modulus 10 'double-add-double' check digit". The basic idea is to:
