@@ -110,6 +110,10 @@ identifiers on the command line:
   them. Includes a `--fix` mode that writes them back to standard output with
   corrected check digits.
 
+* _isin-tool.sc_: Reads ISINs from standard input (one per line) and validates
+  them. Includes a `--fix` mode that writes them back to standard output with
+  corrected check digits.
+
 
 ## Identifier Component Terminology
 
