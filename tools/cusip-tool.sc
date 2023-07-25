@@ -18,12 +18,6 @@
 // limitations under the License.
 //
 
-//export CLASSPATH=ident/target/scala-2.13/classes
-//scala -sourcepath ident/target/scala-2.13/classes tools/src/main/scala/CusipTool.scala
-
-//scala -cp ident/target/scala-2.13/classes:tools/target/scala-2.13/classes CusipTool $@
-//scala -sourcepath ident/src/main/scala:ident/src/main/scala-2.13/:tools/src/main/scala 'CusipTool$' $@
-
 import com.gregorpurdy.ident.Cusip
 import com.gregorpurdy.ident.CusipError
 
