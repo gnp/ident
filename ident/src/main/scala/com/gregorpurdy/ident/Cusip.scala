@@ -468,7 +468,7 @@ object Cusip extends CusipVersionSpecific {
   def isValidPayloadFormatStrict(string: String): Boolean =
     payloadFormat.matches(string)
 
-  /** Valiate that `string` is in the correct format for a _Check Digit_ -- after first normalizing.
+  /** Validate that `string` is in the correct format for a _Check Digit_ -- after first normalizing.
     *
     * @param string
     *   The value to be validated.
@@ -485,7 +485,7 @@ object Cusip extends CusipVersionSpecific {
       case _                   => Left(InvalidCheckDigitFormat(string))
     }
 
-  /** Valiate that `string` is in the correct format for a _Check Digit_. This uses strict validation; the provided
+  /** Validate that `string` is in the correct format for a _Check Digit_. This uses strict validation; the provided
     * value is not normalized first.
     *
     * @param string
