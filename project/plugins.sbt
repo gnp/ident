@@ -6,4 +6,4 @@ addDependencyTreePlugin
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.21")
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.2.1")
 addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.3.7")
-addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.4.5")
+addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.4.6")
