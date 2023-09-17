@@ -22,12 +22,12 @@ object Dependencies {
   val ZioJsonVersion = "0.6.2"
   lazy val ZioJson = "dev.zio" %% "zio-json" % ZioJsonVersion
 
-  val ZioSchemaVersion = "0.4.13"
+  val ZioSchemaVersion = "0.4.14"
   lazy val ZioSchema = "dev.zio" %% "zio-schema" % ZioSchemaVersion
   lazy val ZioSchemaDerivation = "dev.zio" %% "zio-schema-derivation" % ZioSchemaVersion
   lazy val ZioSchemaJson = "dev.zio" %% "zio-schema-json" % ZioSchemaVersion
 
-  val ZioVersion = "2.0.16"
+  val ZioVersion = "2.0.17"
   lazy val Zio = "dev.zio" %% "zio" % ZioVersion
   lazy val ZioTest = "dev.zio" %% "zio-test" % ZioVersion
   lazy val ZioTestMagnolia = "dev.zio" %% "zio-test-magnolia" % ZioVersion
