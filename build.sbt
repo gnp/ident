@@ -148,7 +148,7 @@ lazy val examples = (project in file("examples"))
     publish / skip := true,
     publishLocal := {},
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -172,7 +172,7 @@ lazy val bench = (project in file("bench"))
     publish / skip := true,
     publishLocal := {},
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -187,7 +187,7 @@ lazy val ident = (project in file("ident"))
   .settings(
     name := "ident",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -214,7 +214,7 @@ lazy val identCirce = (project in file("ident-circe"))
   .settings(
     name := "ident-circe",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -243,7 +243,7 @@ lazy val identZioConfig = (project in file("ident-zio-config"))
   .settings(
     name := "ident-zio-config",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -272,7 +272,7 @@ lazy val identZioJson = (project in file("ident-zio-json"))
   .settings(
     name := "ident-zio-json",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
@@ -300,7 +300,7 @@ lazy val identZioSchema = (project in file("ident-zio-schema"))
   .settings(
     name := "ident-zio-schema",
     crossScalaVersions := Seq(Scala2Version, Scala3Version),
-    scalacOptions ++= {
+    scalacOptions := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) => stdCompilerOptions2
         case _            => stdCompilerOptions3
