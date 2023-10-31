@@ -86,6 +86,7 @@ support various encodings:
 
 ```scala
 libraryDependencies += "com.gregorpurdy" %% "ident-circe" % "@VERSION@"
+libraryDependencies += "com.gregorpurdy" %% "ident-zio-config" % "@VERSION@"
 libraryDependencies += "com.gregorpurdy" %% "ident-zio-json" % "@VERSION@"
 libraryDependencies += "com.gregorpurdy" %% "ident-zio-schema" % "@VERSION@"
 ```
