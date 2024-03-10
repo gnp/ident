@@ -91,6 +91,8 @@ val stdCompilerOptions2 = Seq(
   "-Xlint:unused", // Enable -Ywarn-unused:imports,privates,locals,implicits.
   "-Xlint:valpattern", // Enable pattern checks in val definitions.
   "-Xsource:3",
+  "-Xmigration",
+  "-Wconf:msg=method are copied from the case class constructor:s",
   "-Xfatal-warnings"
 )
 

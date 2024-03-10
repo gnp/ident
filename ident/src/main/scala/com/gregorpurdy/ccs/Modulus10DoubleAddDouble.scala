@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ccs
 
+import scala.collection.immutable.Seq
+
 /** The basis for this algorithm is Hans P. Luhn's 1960 patent "Computer for Verifying Numbers", [available for free
   * download](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/2950048 ) from the USPTO.
   *
