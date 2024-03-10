@@ -1,6 +1,6 @@
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.10.0")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.11.1")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.12.0")
 addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "3.4.0")
 addDependencyTreePlugin
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.10.0")
