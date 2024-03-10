@@ -17,8 +17,8 @@
 package com.gregorpurdy.ident
 
 import io.circe.parser.decode
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 import IdentCirce.*
 

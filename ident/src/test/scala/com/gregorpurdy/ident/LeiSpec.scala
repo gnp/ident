@@ -18,8 +18,8 @@ package com.gregorpurdy.ident
 
 import com.gregorpurdy.ccs.IsoIec7064
 import zio.Chunk
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 object LeiSpec extends ZIOSpecDefault {
 

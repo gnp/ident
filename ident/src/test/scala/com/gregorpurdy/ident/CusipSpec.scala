@@ -1,8 +1,8 @@
 package com.gregorpurdy.ident
 
 import zio.Chunk
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 object CusipSpec extends ZIOSpecDefault {
 

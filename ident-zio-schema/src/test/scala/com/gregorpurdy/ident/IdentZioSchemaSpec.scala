@@ -18,8 +18,8 @@ package com.gregorpurdy.ident
 
 import zio.schema.Schema
 import zio.schema.codec.JsonCodec
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 object IdentZioSchemaSpec extends ZIOSpecDefault {
 

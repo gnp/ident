@@ -17,8 +17,8 @@
 package com.gregorpurdy.ident
 
 import zio.json.*
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 import IdentZioJson.*
 

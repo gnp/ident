@@ -16,8 +16,8 @@
 
 package com.gregorpurdy.ccs
 
-import zio.test.Assertion.*
 import zio.test.*
+import zio.test.Assertion.*
 
 import Modulus10DoubleAddDouble.*
 
