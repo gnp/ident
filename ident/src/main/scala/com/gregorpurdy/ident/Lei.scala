@@ -346,7 +346,7 @@ object Lei extends LeiVersionSpecific {
       * Note: Accessing this value implicitly initializes the whitelist data structures, if they have not already been
       * initialized.
       */
-    lazy val lookup: Map[String, Entry] = Map(entries.map(e => e.lei -> e).toIndexedSeq: _*)
+    lazy val lookup: Map[String, Entry] = Map(entries.map(e => e.lei -> e).toIndexedSeq*)
 
     /** Determine whether the provided value is present in the whitelist of non-conforming LEIs. Be sure the value
       * provided is already normalized (no spaces, only uppercase alphanumeric characters).

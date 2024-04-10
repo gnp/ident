@@ -60,7 +60,7 @@ object LeiSpec extends ZIOSpecDefault {
   )
 
   def conformingCasesSuite =
-    suite("Parse and validate conforming LEIs from ISIN_LEI_20210209.csv")(conformingCases.map(conformingCaseTest): _*)
+    suite("Parse and validate conforming LEIs from ISIN_LEI_20210209.csv")(conformingCases.map(conformingCaseTest)*)
 
   /** These come from the ISIN_LEI_20210209.csv file. Note that according to the ISO standard itself, section 5 "Check
     * digit pair", subsection 5.1 "General": "00, 01 and 99 are not valid LEI check digit pairs".
@@ -104,7 +104,7 @@ object LeiSpec extends ZIOSpecDefault {
 
   def nonConformingCasesSuite =
     suite("Parse and validate non-conforming LEIs with *00 and *01 formats from ISIN_LEI_20210209.csv")(
-      nonConformingCases.map(nonConformingCaseTest): _*
+      nonConformingCases.map(nonConformingCaseTest)*
     )
 
   def spec: Spec[Any, Any] = suite("LeiSpec")(
