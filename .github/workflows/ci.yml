@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 17
+        java-version: 23
         check-latest: true
         cache: sbt
     - name: Cache scala dependencies
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 23
           check-latest: true
           cache: sbt
       - name: Cache scala dependencies
@@ -59,8 +59,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scala: ['3.3.0']
-        java: ['17']
+        scala: ['3.6.3']
+        java: ['23']
     steps:
     - name: Checkout current branch
       uses: actions/checkout@v4
