@@ -6,7 +6,7 @@ object Dependencies {
   lazy val CirceGeneric = "io.circe" %% "circe-generic" % CirceVersion
   lazy val CirceParser = "io.circe" %% "circe-parser" % CirceVersion
 
-  val LogbackVersion = "1.5.6"
+  val LogbackVersion = "1.5.16"
   lazy val Logback = "ch.qos.logback" % "logback-classic" % LogbackVersion
 
   val Slf4JVersion = "2.0.16"
