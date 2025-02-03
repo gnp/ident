@@ -60,10 +60,10 @@ final case class Cusip private (value: String) {
 
   /** @return true if [[issueNumber]] is reserved for private use. */
   def hasPrivateIssue: Boolean = {
-    val temp = issuerNumber
-    val nineInTensPlace = temp(6) == '9'
-    val digitInOnesPlace = Character.isDigit(temp(7))
-    val letterInOnesPlace = (temp(7) >= 'A') && (temp(7) <= 'Y')
+    val temp = issueNumber
+    val nineInTensPlace = temp(0) == '9'
+    val digitInOnesPlace = Character.isDigit(temp(1))
+    val letterInOnesPlace = (temp(1) >= 'A') && (temp(1) <= 'Y')
     nineInTensPlace && (digitInOnesPlace || letterInOnesPlace)
   }
 
