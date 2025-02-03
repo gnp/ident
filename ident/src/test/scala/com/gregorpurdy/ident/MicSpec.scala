@@ -13,43 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.gregorpurdy.ident
 
-import zio.Chunk
-import zio.test.*
-import zio.test.Assertion.*
+import org.scalatest.*
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.*
 
-object MicSpec extends ZIOSpecDefault {
+class MicSpec extends AnyFunSpec with should.Matchers {
 
-  def spec: Spec[Any, Any] = suite("MicSpec")(
-    test("Correctly allow the NASDAQ MIC") {
+  describe("Mic") {
+    it("Correctly allow the NASDAQ MIC") {
       val mic = Mic.fromString("XNAS").toOption.get
 
-      assert(mic.value)(equalTo("XNAS"))
-      assert(mic.toString)(equalTo("XNAS"))
-      assert(mic.toStringTagged)(equalTo("mic:XNAS"))
-    },
-    test("Correctly allow the NYSE MIC") {
+      mic.value shouldBe "XNAS"
+      mic.toString shouldBe "XNAS"
+      mic.toStringTagged shouldBe "mic:XNAS"
+    }
+
+    it("Correctly allow the NYSE MIC") {
       val mic = Mic.fromString("XNYS").toOption.get
 
-      assert(mic.value)(equalTo("XNYS"))
-      assert(mic.toString)(equalTo("XNYS"))
-      assert(mic.toStringTagged)(equalTo("mic:XNYS"))
-    },
-    test("Correctly support default Ordering") {
-      val nyse = Mic.fromString("XNYS").toOption.get
-      val nasdaq = Mic.fromString("XNAS").toOption.get
-      val chunk = Chunk(nyse, nasdaq)
-      val sorted = chunk.sorted
-      assert(sorted)(equalTo(Chunk(nasdaq, nyse)))
-    },
-    test("Correctly support pattern matching") {
-      val nyse = Mic.fromString("XNYS").toOption.get
-      val nasdaq = Mic.fromString("XNAS").toOption.get
-      val chunk = Chunk(nyse, nasdaq).map { case Mic(v) => v }
-      assert(chunk)(equalTo(Chunk("XNYS", "XNAS")))
+      mic.value shouldBe "XNYS"
+      mic.toString shouldBe "XNYS"
+      mic.toStringTagged shouldBe "mic:XNYS"
     }
-  )
+
+    it("Correctly support default Ordering") {
+      val nyse = Mic.fromString("XNYS").toOption.get
+      val nasdaq = Mic.fromString("XNAS").toOption.get
+      val seq = Seq(nyse, nasdaq)
+      val sorted = seq.sorted
+      sorted shouldBe Seq(nasdaq, nyse)
+    }
+
+    it("Correctly support pattern matching") {
+      val nyse = Mic.fromString("XNYS").toOption.get
+      val nasdaq = Mic.fromString("XNAS").toOption.get
+      val seq = Seq(nyse, nasdaq).map { case Mic(v) => v }
+      seq shouldBe Seq("XNYS", "XNAS")
+    }
+  }
 
 }

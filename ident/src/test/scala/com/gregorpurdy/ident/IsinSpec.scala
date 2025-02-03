@@ -16,87 +16,105 @@
 
 package com.gregorpurdy.ident
 
-import zio.Chunk
-import zio.test.*
-import zio.test.Assertion.*
+import org.scalatest.*
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.*
 
-object IsinSpec extends ZIOSpecDefault {
+object IsinSpec extends AnyFunSpec with should.Matchers {
 
   val isinString = "US0378331005"
   val countryCode = "US"
   val securityIdentifier = "037833100"
   val checkDigit = "5"
 
-  def spec: Spec[Any, Any] = suite("IsinSpec")(
-    test("Correctly parse and validate the example AAPL ISIN from the isin.org web site") {
+  describe("Isin") {
+    it("should correctly parse and validate the example AAPL ISIN from the isin.org web site") {
       val isin = Isin.fromString(isinString).toOption.get
 
-      assert(isin.value)(equalTo(isinString))
-      assert(isin.countryCode)(equalTo(countryCode))
-      assert(isin.securityIdentifier)(equalTo(securityIdentifier))
-      assert(isin.checkDigit)(equalTo(checkDigit))
-    },
-    test("Correctly compute the check digit for AAPL from the isin.org web site") {
+      isin.value shouldBe isinString
+      isin.countryCode shouldBe countryCode
+      isin.securityIdentifier shouldBe securityIdentifier
+      isin.checkDigit shouldBe checkDigit
+    }
+
+    it("should correctly compute the check digit for AAPL from the isin.org web site") {
       val result = Isin.fromPayloadParts(countryCode, securityIdentifier)
-      assert(result)(isRight(anything))
-      result.map { case isin @ Isin(_) =>
-        assert(isin.value)(equalTo(isinString))
-        assert(isin.countryCode)(equalTo(countryCode))
-        assert(isin.securityIdentifier)(equalTo(securityIdentifier))
-        assert(isin.checkDigit)(equalTo(checkDigit))
-      }
-    },
-    test("Correctly validate the check digit for AAPL from the isin.org web site") {
+      result shouldBe a[Right[?, ?]]
+
+      val isin = result.toOption.get
+      isin.value shouldBe isinString
+      isin.countryCode shouldBe countryCode
+      isin.securityIdentifier shouldBe securityIdentifier
+      isin.checkDigit shouldBe checkDigit
+    }
+
+    it("should correctly validate the check digit for AAPL from the isin.org web site") {
       val isin = Isin.fromParts(countryCode, securityIdentifier, checkDigit).toOption.get
 
-      assert(isin.value)(equalTo(isinString))
-      assert(isin.countryCode)(equalTo(countryCode))
-      assert(isin.securityIdentifier)(equalTo(securityIdentifier))
-      assert(isin.checkDigit)(equalTo(checkDigit))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '0' check digit (BCC aka Boise Cascade)") {
-      assert(Isin.fromString("US09739D1000").toOption.get.toString)(equalTo("US09739D1000"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '1' check digit (INTC aka Intel)") {
-      assert(Isin.fromString("US4581401001").toOption.get.toString)(equalTo("US4581401001"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '2' check digit (XRX aka Xerox)") {
-      assert(Isin.fromString("US98421M1062").toOption.get.toString)(equalTo("US98421M1062"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '3' check digit (AAL aka American Airlines)") {
-      assert(Isin.fromString("US02376R1023").toOption.get.toString)(equalTo("US02376R1023"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '4' check digit (VNDA aka Vanda Pharmaceuticals)") {
-      assert(Isin.fromString("US9216591084").toOption.get.toString)(equalTo("US9216591084"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '5' check digit (APT aka AlphaProTec)") {
-      assert(Isin.fromString("US0207721095").toOption.get.toString)(equalTo("US0207721095"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '6' check digit (PRDO aka Perdoceo Education)") {
-      assert(Isin.fromString("US71363P1066").toOption.get.toString)(equalTo("US71363P1066"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '7' check digit (MEI aka Methode Electronics)") {
-      assert(Isin.fromString("US5915202007").toOption.get.toString)(equalTo("US5915202007"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '8' check digit (IMKTA aka Ingles Markets)") {
-      assert(Isin.fromString("US4570301048").toOption.get.toString)(equalTo("US4570301048"))
-    },
-    test("Correctly parse and validate a real-world ISIN with a '9' check digit (SUPN aka Supernus Pharmaceuticals)") {
-      assert(Isin.fromString("US8684591089").toOption.get.toString)(equalTo("US8684591089"))
-    },
-    test("Correctly support default Ordering") {
-      val bcc = Isin.fromString("US09739D1000").toOption.get
-      val intc = Isin.fromString("US4581401001").toOption.get
-      val chunk = Chunk(intc, bcc)
-      val sorted = chunk.sorted
-      assert(sorted)(equalTo(Chunk(bcc, intc)))
-    },
-    test("Correctly support pattern matching") {
-      val bcc = Isin.fromString("US09739D1000").toOption.get
-      val intc = Isin.fromString("US4581401001").toOption.get
-      val chunk = Chunk(intc, bcc).map { case Isin(v) => v }
-      assert(chunk)(equalTo(Chunk("US4581401001", "US09739D1000")))
+      isin.value shouldBe isinString
+      isin.countryCode shouldBe countryCode
+      isin.securityIdentifier shouldBe securityIdentifier
+      isin.checkDigit shouldBe checkDigit
     }
-  )
+
+    it("should correctly parse and validate a real-world ISIN with a '0' check digit (BCC aka Boise Cascade)") {
+      Isin.fromString("US09739D1000").toOption.get.toString shouldBe "US09739D1000"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '1' check digit (INTC aka Intel)") {
+      Isin.fromString("US4581401001").toOption.get.toString shouldBe "US4581401001"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '2' check digit (XRX aka Xerox)") {
+      Isin.fromString("US98421M1062").toOption.get.toString shouldBe "US98421M1062"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '3' check digit (AAL aka American Airlines)") {
+      Isin.fromString("US02376R1023").toOption.get.toString shouldBe "US02376R1023"
+    }
+
+    it(
+      "should correctly parse and validate a real-world ISIN with a '4' check digit (VNDA aka Vanda Pharmaceuticals)"
+    ) {
+      Isin.fromString("US9216591084").toOption.get.toString shouldBe "US9216591084"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '5' check digit (APT aka AlphaProTec)") {
+      Isin.fromString("US0207721095").toOption.get.toString shouldBe "US0207721095"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '6' check digit (PRDO aka Perdoceo Education)") {
+      Isin.fromString("US71363P1066").toOption.get.toString shouldBe "US71363P1066"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '7' check digit (MEI aka Methode Electronics)") {
+      Isin.fromString("US5915202007").toOption.get.toString shouldBe "US5915202007"
+    }
+
+    it("should correctly parse and validate a real-world ISIN with a '8' check digit (IMKTA aka Ingles Markets)") {
+      Isin.fromString("US4570301048").toOption.get.toString shouldBe "US4570301048"
+    }
+
+    it(
+      "should correctly parse and validate a real-world ISIN with a '9' check digit (SUPN aka Supernus Pharmaceuticals)"
+    ) {
+      Isin.fromString("US8684591089").toOption.get.toString shouldBe "US8684591089"
+    }
+
+    it("should correctly support default Ordering") {
+      val bcc = Isin.fromString("US09739D1000").toOption.get
+      val intc = Isin.fromString("US4581401001").toOption.get
+      val seq = Seq(intc, bcc)
+      val sorted = seq.sorted
+      sorted shouldBe Seq(bcc, intc)
+    }
+
+    it("should correctly support pattern matching") {
+      val bcc = Isin.fromString("US09739D1000").toOption.get
+      val intc = Isin.fromString("US4581401001").toOption.get
+      val seq = Seq(intc, bcc).map { case Isin(v) => v }
+      seq shouldBe Seq("US4581401001", "US09739D1000")
+    }
+  }
 
 }

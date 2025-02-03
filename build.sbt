@@ -129,19 +129,17 @@ lazy val ident = (project in file("ident"))
     crossScalaVersions := Nil,
     scalacOptions := stdCompilerOptions3,
     libraryDependencies ++= Seq(
+      ScalaTest % Test,
+      ScalaCheck % Test,
       Slf4JApi % Test,
       JclOverSlf4J % Test,
       Log4JOverSlf4J % Test,
       JulToSlf4J % Test,
-      Logback % Test,
-      ZioTest % Test,
-      ZioTestMagnolia % Test,
-      ZioTestSbt % Test
+      Logback % Test
     )
       .map(_.exclude("commons-logging", "commons-logging"))
       .map(_.exclude("log4j", "log4j"))
-      .map(_.exclude("org.slf4j", "slf4j-log4j12")),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+      .map(_.exclude("org.slf4j", "slf4j-log4j12"))
   )
 
 lazy val identCirce = (project in file("ident-circe"))

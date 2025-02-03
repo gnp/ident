@@ -1,91 +1,121 @@
-/*
- * Copyright 2023 Gregor Purdy
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.gregorpurdy.ccs
 
-import zio.test.*
-import zio.test.Assertion.*
+import org.scalacheck.Gen
+import org.scalacheck.Prop.forAll
+import org.scalacheck.Test
+import org.scalatest.*
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.*
 
-import Modulus10DoubleAddDouble.*
+class Modulus10DoubleAddDoubleSpec extends AnyFunSpec with should.Matchers {
 
-object Modulus10DoubleAddDoubleSpec extends ZIOSpecDefault {
-  def spec: Spec[Any, Any] = suite("Modulus10DoubleAddDoubleSpec")(
-    test("CusipVariant on CUSIP-length (8) payloads") {
-      check(Gen.alphaNumericStringBounded(8, 8)) { s =>
+  import Modulus10DoubleAddDouble.*
+
+  def genAlphaNumStrOfLength(length: Int): Gen[String] =
+    Gen.listOfN(length, Gen.alphaNumChar).map(_.mkString)
+
+  def genAlphaNumStr(minLength: Int, maxLength: Int): Gen[String] =
+    for {
+      length <- Gen.choose(minLength, maxLength)
+      str <- Gen.listOfN(length, Gen.alphaNumChar).map(_.mkString)
+    } yield str
+
+  describe("Modulus10DoubleAddDouble") {
+
+    it("CusipVariant on CUSIP-length (8) payloads") {
+      forAll(genAlphaNumStrOfLength(8)) { s =>
         val payload = s.toUpperCase
-        assert(CusipVariant.calculate(payload))(equalTo(CusipVariant.calculateSimple(payload)))
-      }
-    } @@ TestAspect.samples(1000),
-    test("CusipVariant on FIGI-length (11) payloads") {
-      check(Gen.alphaNumericStringBounded(11, 11)) { s =>
-        val payload = s.toUpperCase
-        assert(CusipVariant.calculate(payload))(equalTo(CusipVariant.calculateSimple(payload)))
-      }
-    } @@ TestAspect.samples(1000),
-    test("CusipVariant on length 1 payloads") {
-      check(Gen.alphaNumericStringBounded(1, 1)) { s =>
-        val payload = s.toUpperCase
-        assert(CusipVariant.calculate(payload))(equalTo(CusipVariant.calculateSimple(payload)))
-      }
-    },
-    test("CusipVariant on length 2 payloads") {
-      check(Gen.alphaNumericStringBounded(2, 2)) { s =>
-        val payload = s.toUpperCase
-        assert(CusipVariant.calculate(payload))(equalTo(CusipVariant.calculateSimple(payload)))
-      }
-    },
-    test("CusipVariant on length 1-100 payloads") {
-      check(Gen.alphaNumericStringBounded(1, 100)) { s =>
-        val payload = s.toUpperCase
-        assert(CusipVariant.calculate(payload))(equalTo(CusipVariant.calculateSimple(payload)))
-      }
-    },
-    test("IsinVariant on ISIN-length (11) payloads") {
-      check(Gen.alphaNumericStringBounded(11, 11)) { s =>
-        val payload = s.toUpperCase
-        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
-      }
-    } @@ TestAspect.samples(1000),
-    test("IsinVariant on length 1 payloads") {
-      check(Gen.alphaNumericStringBounded(1, 1)) { s =>
-        val payload = s.toUpperCase
-        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
-      }
-    },
-    test("IsinVariant on length 2 payloads") {
-      check(Gen.alphaNumericStringBounded(2, 2)) { s =>
-        val payload = s.toUpperCase
-        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
-      }
-    },
-    test("IsinVariant on length 1-100 payloads [Uppercase]") {
-      check(Gen.alphaNumericStringBounded(1, 100)) { s =>
-        val payload = s.toUpperCase
-        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
-      }
-    },
-    test("IsinVariant on length 1-100 payloads [Mixed Case]") {
-      check(Gen.alphaNumericStringBounded(1, 100)) { s =>
-        val payload = s.toLowerCase
-        assert(IsinVariant.calculate(payload))(equalTo(IsinVariant.calculateSimple(payload)))
-      }
-    },
-    test("charValue should return zero for non-alphanumeric characters") {
-      assert(charValue('#'))(isZero)
+        val a = CusipVariant.calculate(payload)
+        val b = CusipVariant.calculateSimple(payload)
+        a.equals(b)
+      }.check(Test.Parameters.default.withMinSuccessfulTests(1000))
     }
-  )
+
+    it("CusipVariant on FIGI-length (11) payloads") {
+      forAll(genAlphaNumStrOfLength(11)) { s =>
+        val payload = s.toUpperCase
+        val a = CusipVariant.calculate(payload)
+        val b = CusipVariant.calculateSimple(payload)
+        a.equals(b)
+      }.check(Test.Parameters.default.withMinSuccessfulTests(1000))
+    }
+
+    it("CusipVariant on length 1 payloads") {
+      forAll(genAlphaNumStrOfLength(1)) { s =>
+        val payload = s.toUpperCase
+        val a = CusipVariant.calculate(payload)
+        val b = CusipVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("CusipVariant on length 2 payloads") {
+      forAll(genAlphaNumStrOfLength(2)) { s =>
+        val payload = s.toUpperCase
+        val a = CusipVariant.calculate(payload)
+        val b = CusipVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("CusipVariant on length 1-100 payloads") {
+      forAll(genAlphaNumStr(1, 100)) { s =>
+        val payload = s.toUpperCase
+        val a = CusipVariant.calculate(payload)
+        val b = CusipVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("IsinVariant on ISIN-length (11) payloads") {
+      forAll(genAlphaNumStrOfLength(11)) { s =>
+        val payload = s.toUpperCase
+        val a = IsinVariant.calculate(payload)
+        val b = IsinVariant.calculateSimple(payload)
+        a.equals(b)
+      }.check(Test.Parameters.default.withMinSuccessfulTests(1000))
+    }
+
+    it("IsinVariant on length 1 payloads") {
+      forAll(genAlphaNumStrOfLength(1)) { s =>
+        val payload = s.toUpperCase
+        val a = IsinVariant.calculate(payload)
+        val b = IsinVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("IsinVariant on length 2 payloads") {
+      forAll((genAlphaNumStrOfLength(2))) { s =>
+        val payload = s.toUpperCase
+        val a = IsinVariant.calculate(payload)
+        val b = IsinVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("IsinVariant on length 1-100 payloads [Uppercase]") {
+      forAll(genAlphaNumStr(1, 100)) { s =>
+        val payload = s.toUpperCase
+        val a = IsinVariant.calculate(payload)
+        val b = IsinVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("IsinVariant on length 1-100 payloads [Lowercase]") {
+      forAll(genAlphaNumStr(1, 100)) { s =>
+        val payload = s.toLowerCase
+        val a = IsinVariant.calculate(payload)
+        val b = IsinVariant.calculateSimple(payload)
+        a.equals(b)
+      }
+    }
+
+    it("charValue should return zero for non-alphanumeric characters") {
+      charValue('#') shouldBe 0
+    }
+
+  }
 
 }

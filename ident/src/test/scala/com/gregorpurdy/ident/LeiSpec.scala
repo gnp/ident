@@ -17,11 +17,11 @@
 package com.gregorpurdy.ident
 
 import com.gregorpurdy.ccs.IsoIec7064
-import zio.Chunk
-import zio.test.*
-import zio.test.Assertion.*
+import org.scalatest.*
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.*
 
-object LeiSpec extends ZIOSpecDefault {
+object LeiSpec extends AnyFunSpec with should.Matchers {
 
   /** These are from the ISIN_LEI_20210209.csv file from GLEIF.
     */
@@ -47,21 +47,6 @@ object LeiSpec extends ZIOSpecDefault {
     "AJ6VL0Z1WDC42KKJZO20"
   )
 
-  def conformingCaseTest(value: String): Spec[Any, Nothing] = suite(s"Conforming LEI '$value'")(
-    test("Correctly parse") {
-      assert(Lei.fromString(value))(isRight(hasField("isConforming", _.isConforming, isTrue)))
-    },
-    test("Correctly validate") {
-      assertTrue(Lei.validate(value))
-    },
-    test("Correctly validateAllowNonConforming(_)") {
-      assertTrue(Lei.validateAllowNonConforming(value))
-    }
-  )
-
-  def conformingCasesSuite =
-    suite("Parse and validate conforming LEIs from ISIN_LEI_20210209.csv")(conformingCases.map(conformingCaseTest)*)
-
   /** These come from the ISIN_LEI_20210209.csv file. Note that according to the ISO standard itself, section 5 "Check
     * digit pair", subsection 5.1 "General": "00, 01 and 99 are not valid LEI check digit pairs".
     */
@@ -75,67 +60,91 @@ object LeiSpec extends ZIOSpecDefault {
     "315700WH3YMKHCVYW201"
   )
 
-  def nonConformingCaseTest(value: String): Spec[Any, Nothing] = suite(s"Non-conforming LEI '$value'")(
-    test("Correctly parse") {
-      assert(Lei.fromString(value))(isRight(hasField("isConforming", _.isConforming, isFalse)))
-    },
-    test("Correctly fail to validate(_)") {
-      assertTrue(!Lei.validate(value))
-    },
-    test("Correctly validateAllowNonConforming(_)") {
-      assertTrue(Lei.validateAllowNonConforming(value))
-    },
-    /*
-     * NOTE: These identifiers from the GLEIF data file are NOT valid because they end in "00" or "01" which subsection
-     * 5.1 of the ISO standard explicitly disallow along with "99". However, if you only run the check-digit-validation
-     * step without rejecting them a priori, then they will appear to be valid LEIs (if the compute_iso7064_mod97_10
-     * method returns 1 for a 20-digit LEI then it is possibly valid (although you are also supposed to check that the
-     * check digits are in the range [02-98] also. This test is here to demonstrate that the bad LEIs in the GLEIF data
-     * are probably there because the range check was not done to further validate purported LEIs that passed the
-     * "MOD 97-10" check alone.
-     */
-    test(
-      s"Correctly get 1 for compute_iso7064_mod97_10(_)"
-    ) {
-      val result = IsoIec7064.mod97_10(value)
-      assert(result)(equalTo(1))
+  describe("Lei") {
+    describe("ISO 17442-1:2020(E) spec example") {
+      it("should correctly parse and validate LEI from section A.1") {
+        val lou = "YZ83"
+        val entity = "GD8L7GG84979J5"
+
+        val lei = Lei.fromPartsCalcCheckDigits(lou, entity).toOption.get
+        lei.louIdentifier shouldBe lou
+        lei.entityIdentifier shouldBe entity
+
+        val checkDigits = "16"
+        lei.checkDigits shouldBe checkDigits
+
+        val leiString = s"${lou}${entity}${checkDigits}"
+        lei.value shouldBe leiString
+      }
     }
-  )
 
-  def nonConformingCasesSuite =
-    suite("Parse and validate non-conforming LEIs with *00 and *01 formats from ISIN_LEI_20210209.csv")(
-      nonConformingCases.map(nonConformingCaseTest)*
-    )
+    describe("Conforming LEIs from ISIN_LEI_20210209.csv") {
+      conformingCases.foreach { value =>
+        describe(s"Conforming LEI '$value'") {
+          it("should parse correctly") {
+            val lei = Lei.fromString(value).toOption.get
+            lei.isConforming shouldBe true
+          }
 
-  def spec: Spec[Any, Any] = suite("LeiSpec")(
-    test(s"Correctly parse and validate LEI from section A.1 example calculation in the ISO 17442-1:2020(E) spec") {
-      val lou = "YZ83"
-      val entity = "GD8L7GG84979J5"
+          it("should validate correctly") {
+            Lei.validate(value) shouldBe true
+          }
 
-      val lei = Lei.fromPartsCalcCheckDigits(lou, entity).toOption.get
-      assert(lei.louIdentifier)(equalTo(lou))
-      assert(lei.entityIdentifier)(equalTo(entity))
+          it("should validate when allowing non-conforming") {
+            Lei.validateAllowNonConforming(value) shouldBe true
+          }
+        }
+      }
+    }
 
-      val checkDigits = "16"
-      assert(lei.checkDigits)(equalTo(checkDigits))
+    describe("Non-conforming LEIs with *00 and *01 formats") {
+      nonConformingCases.foreach { value =>
+        describe(s"Non-conforming LEI '$value'") {
+          it("should parse correctly") {
+            val lei = Lei.fromString(value).toOption.get
+            lei.isConforming shouldBe false
+          }
 
-      val leiString = s"${lou}${entity}${checkDigits}"
-      assert(lei.value)(equalTo(leiString))
-    },
-    conformingCasesSuite,
-    nonConformingCasesSuite,
-    test("Correctly support default Ordering") {
+          it("should fail validation") {
+            Lei.validate(value) shouldBe false
+          }
+
+          it("should validate when allowing non-conforming") {
+            Lei.validateAllowNonConforming(value) shouldBe true
+          }
+
+          /*
+           * NOTE: These identifiers from the GLEIF data file are NOT valid because they end in "00" or "01" which subsection
+           * 5.1 of the ISO standard explicitly disallow along with "99". However, if you only run the check-digit-validation
+           * step without rejecting them a priori, then they will appear to be valid LEIs (if the compute_iso7064_mod97_10
+           * method returns 1 for a 20-digit LEI then it is possibly valid (although you are also supposed to check that the
+           * check digits are in the range [02-98] also. This test is here to demonstrate that the bad LEIs in the GLEIF data
+           * are probably there because the range check was not done to further validate purported LEIs that passed the
+           * "MOD 97-10" check alone.
+           */
+          it("should get 1 for compute_iso7064_mod97_10") {
+            val result = IsoIec7064.mod97_10(value)
+            result shouldBe 1
+          }
+        }
+      }
+    }
+
+    it("should correctly support default Ordering") {
       val a = Lei.fromString("635400B4JJBON4TCHF02").toOption.get
       val b = Lei.fromString("529900ODI3047E2LIV03").toOption.get
-      val chunk = Chunk(a, b)
-      val sorted = chunk.sorted
-      assert(sorted)(equalTo(Chunk(b, a)))
-    },
-    test("Correctly support pattern matching") {
+      val seq = Seq(a, b)
+      val sorted = seq.sorted
+      sorted shouldBe Seq(b, a)
+    }
+
+    it("should correctly support pattern matching") {
       val a = Lei.fromString("635400B4JJBON4TCHF02").toOption.get
       val b = Lei.fromString("529900ODI3047E2LIV03").toOption.get
-      val chunk = Chunk(a, b).map { case Lei(v) => v }
-      assert(chunk)(equalTo(Chunk("635400B4JJBON4TCHF02", "529900ODI3047E2LIV03")))
+      val seq = Seq(a, b).map { case Lei(v) => v }
+      seq shouldBe Seq("635400B4JJBON4TCHF02", "529900ODI3047E2LIV03")
     }
-  )
+
+  }
+
 }

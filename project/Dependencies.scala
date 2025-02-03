@@ -9,6 +9,12 @@ object Dependencies {
   val LogbackVersion = "1.5.16"
   lazy val Logback = "ch.qos.logback" % "logback-classic" % LogbackVersion
 
+  val ScalaCheckVersion = "1.18.1"
+  lazy val ScalaCheck = "org.scalacheck" %% "scalacheck" % ScalaCheckVersion
+
+  val ScalaTestVersion = "3.2.19"
+  lazy val ScalaTest = "org.scalatest" %% "scalatest" % ScalaTestVersion
+
   val Slf4JVersion = "2.0.16"
   lazy val Slf4JApi = "org.slf4j" % "slf4j-api" % Slf4JVersion
   lazy val JclOverSlf4J = "org.slf4j" % "jcl-over-slf4j" % Slf4JVersion

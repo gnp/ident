@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,50 +16,54 @@
 
 package com.gregorpurdy.ident
 
-import zio.Chunk
-import zio.test.*
-import zio.test.Assertion.*
+import org.scalatest.*
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.*
 
-object CikSpec extends ZIOSpecDefault {
+class CikSpec extends AnyFunSpec with should.Matchers {
 
-  def spec: Spec[Any, Any] = suite("CikSpec")(
-    test("Correctly allow the AAPL CIK as a Long") {
+  describe("Cik") {
+    it("should correctly allow the AAPL CIK as a Long") {
       val cik = Cik.fromLong(320193L).toOption.get
 
-      assert(cik.value)(equalTo(320193L))
-      assert(cik.toString)(equalTo("320193"))
-      assert(cik.toStringPadded)(equalTo("0000320193"))
-      assert(cik.toStringTagged)(equalTo("cik:320193"))
-    },
-    test("Correctly allow the AAPL CIK as a String") {
+      cik.value should be(320193L)
+      cik.toString should be("320193")
+      cik.toStringPadded should be("0000320193")
+      cik.toStringTagged should be("cik:320193")
+    }
+
+    it("should correctly allow the AAPL CIK as a String") {
       val cik = Cik.fromString("320193").toOption.get
 
-      assert(cik.value)(equalTo(320193L))
-      assert(cik.toString)(equalTo("320193"))
-      assert(cik.toStringPadded)(equalTo("0000320193"))
-      assert(cik.toStringTagged)(equalTo("cik:320193"))
-    },
-    test("Correctly allow the AAPL CIK as a String with leading zeros") {
+      cik.value should be(320193L)
+      cik.toString should be("320193")
+      cik.toStringPadded should be("0000320193")
+      cik.toStringTagged should be("cik:320193")
+    }
+
+    it("should correctly allow the AAPL CIK as a String with leading zeros") {
       val cik = Cik.fromString("000320193").toOption.get
 
-      assert(cik.value)(equalTo(320193L))
-      assert(cik.toString)(equalTo("320193"))
-      assert(cik.toStringPadded)(equalTo("0000320193"))
-      assert(cik.toStringTagged)(equalTo("cik:320193"))
-    },
-    test("Correctly support default Ordering") {
-      val aapl = Cik.fromLong(320193L).toOption.get
-      val ibm = Cik.fromLong(51143L).toOption.get
-      val chunk = Chunk(aapl, ibm)
-      val sorted = chunk.sorted
-      assert(sorted)(equalTo(Chunk(ibm, aapl)))
-    },
-    test("Correctly support pattern matching") {
-      val aapl = Cik.fromLong(320193L).toOption.get
-      val ibm = Cik.fromLong(51143L).toOption.get
-      val chunk = Chunk(aapl, ibm).map { case Cik(v) => v }
-      assert(chunk)(equalTo(Chunk(320193L, 51143L)))
+      cik.value should be(320193L)
+      cik.toString should be("320193")
+      cik.toStringPadded should be("0000320193")
+      cik.toStringTagged should be("cik:320193")
     }
-  )
+
+    it("should correctly support default Ordering") {
+      val aapl = Cik.fromLong(320193L).toOption.get
+      val ibm = Cik.fromLong(51143L).toOption.get
+      val seq = Seq(aapl, ibm)
+      val sorted = seq.sorted
+      sorted should be(Seq(ibm, aapl))
+    }
+
+    it("should correctly support pattern matching") {
+      val aapl = Cik.fromLong(320193L).toOption.get
+      val ibm = Cik.fromLong(51143L).toOption.get
+      val seq = Seq(aapl, ibm).map { case Cik(v) => v }
+      seq should be(Seq(320193L, 51143L))
+    }
+  }
 
 }
