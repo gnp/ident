@@ -20,7 +20,7 @@ import org.scalatest.*
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.*
 
-object IsinSpec extends AnyFunSpec with should.Matchers {
+class IsinSpec extends AnyFunSpec with should.Matchers {
 
   val isinString = "US0378331005"
   val countryCode = "US"

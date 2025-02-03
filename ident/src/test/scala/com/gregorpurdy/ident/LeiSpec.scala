@@ -21,7 +21,7 @@ import org.scalatest.*
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.*
 
-object LeiSpec extends AnyFunSpec with should.Matchers {
+class LeiSpec extends AnyFunSpec with should.Matchers {
 
   /** These are from the ISIN_LEI_20210209.csv file from GLEIF.
     */
