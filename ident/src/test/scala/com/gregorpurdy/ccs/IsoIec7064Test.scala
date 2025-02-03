@@ -1,7 +1,7 @@
 package com.gregorpurdy.ccs
 
-import zio.test._
-import zio.test.Assertion._
+import zio.test.*
+import zio.test.Assertion.*
 
 object IsoIec7064Test extends ZIOSpecDefault {
 

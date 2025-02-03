@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.gregorpurdy.ident
 
 import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
 
+import scala.util.CommandLineParser
 import scala.util.matching.Regex
 
 /** @see
@@ -56,7 +57,7 @@ final case class Figi private (value: String) {
 
 }
 
-object Figi extends FigiVersionSpecific {
+object Figi {
 
   val providerFormat: Regex = "[B-DF-HJ-NP-TV-Z0-9]{2}".r
   val providerExclusions: Set[String] = Set("BS", "BM", "GG", "GB", "GH", "KY", "VG")
@@ -64,6 +65,18 @@ object Figi extends FigiVersionSpecific {
   val idFormat: Regex = "[B-DF-HJ-NP-TV-Z0-9]{8}".r
   val checkDigitFormat: Regex = "[0-9]".r
   val figiFormat: Regex = "([B-DF-HJ-NP-TV-Z0-9]{2})(G)([B-DF-HJ-NP-TV-Z0-9]{8})([0-9])".r
+
+  given Ordering[Figi] = Ordering.by(_.value)
+
+  object FigiCommandLineParserFromString extends CommandLineParser.FromString[Figi] {
+    def fromString(s: String): Figi = Figi.fromString(s) match {
+      case Left(s)      => throw new IllegalArgumentException(s)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Figi] = Figi.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Figi] = FigiCommandLineParserFromString
 
   def calculateCheckDigit(
       provider: String,

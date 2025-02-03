@@ -1,9 +1,9 @@
 #!/usr/bin/env -S scala-cli shebang -S 3
-//> using scala 2.13
-//> using dep "com.gregorpurdy::ident:0.3.1-SNAPSHOT"
+//> using scala 3.6.3
+//> using dep "com.gregorpurdy::ident:0.4.0-SNAPSHOT"
 
 //
-// Copyright 2023 Gregor Purdy
+// Copyright 2023-2025 Gregor Purdy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

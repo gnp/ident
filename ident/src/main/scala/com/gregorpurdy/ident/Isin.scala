@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.gregorpurdy.ident
 
 import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
 
+import scala.util.CommandLineParser
 import scala.util.matching.Regex
 
 /** ISIN stands for International Security Identification Number. It is a String identifer composed of three parts: (1)
@@ -62,7 +63,7 @@ object IsinError {
   }
 }
 
-object Isin extends IsinVersionSpecific {
+object Isin {
   import IsinError.*
 
   val countryCodeFormat: Regex = "([A-Z]{2})".r
@@ -71,6 +72,18 @@ object Isin extends IsinVersionSpecific {
   val checkDigitFormat: Regex = "([0-9])".r
   val isinFormat: Regex = "([A-Z]{2})([A-Z0-9]{9})([0-9])".r
   val isinFormatFull: Regex = "([A-Z]{2}[A-Z0-9]{9}[0-9])".r
+
+  given Ordering[Isin] = Ordering.by(_.value)
+
+  object IsinCommandLineParserFromString extends CommandLineParser.FromString[Isin] {
+    def fromString(s: String): Isin = Isin.fromString(s) match {
+      case Left(s)      => throw new IllegalArgumentException(s.toString)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Isin] = Isin.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Isin] = IsinCommandLineParserFromString
 
   def calculateCheckDigitFromPayload(
       payload: String

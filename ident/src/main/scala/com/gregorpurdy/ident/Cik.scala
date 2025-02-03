@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.gregorpurdy.ident
 
+import scala.util.CommandLineParser
+
 /** An SEC / EDGAR Central Index Key (CIK) number is a 10-digit numerical identifier associated with every entity that
   * files with the SEC.
   */
@@ -29,11 +31,23 @@ final case class Cik private (value: Long) {
 
 }
 
-object Cik extends CikVersionSpecific {
+object Cik {
 
   private val cikFormat = "([1-9][0-9]{0,9})".r
 
   val MaxCIK: Long = 9999999999L
+
+  given Ordering[Cik] = Ordering.by(_.value)
+
+  object CikCommandLineParserFromString extends CommandLineParser.FromString[Cik] {
+    def fromString(s: String): Cik = Cik.fromString(s) match {
+      case Left(s)      => throw new IllegalArgumentException(s)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Cik] = Cik.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Cik] = CikCommandLineParserFromString
 
   def isValidFormatStrict(string: String): Boolean =
     cikFormat.matches(string)

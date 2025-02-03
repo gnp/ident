@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.gregorpurdy.ident
 import com.gregorpurdy.ccs.IsoIec7064
 
 import java.time.Instant
+import scala.util.CommandLineParser
 import scala.util.matching.Regex
 
 /** Legal Entity Identifier (LEI) is (according to the GLEIF web site):
@@ -76,12 +77,24 @@ final case class Lei private (value: String) {
 
 }
 
-object Lei extends LeiVersionSpecific {
+object Lei {
 
   val leiFormat: Regex = "([A-Z0-9]{4})([A-Z0-9]{14})([0-9]{2})".r
   val louIdentifierFormat: String = "([A-Z0-9]{4})"
   val entityIdentifierFormat: String = "([A-Z0-9]{14})"
   val checkDigitsFormat: String = "([0-9]{2})"
+
+  given Ordering[Lei] = Ordering.by(_.value)
+
+  object LeiCommandLineParserFromString extends CommandLineParser.FromString[Lei] {
+    def fromString(s: String): Lei = Lei.fromString(s) match {
+      case Left(s)      => throw new IllegalArgumentException(s)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Lei] = Lei.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Lei] = LeiCommandLineParserFromString
 
   /** @param string
     *   should be a string WITH two zero check digits ("00") already appended to the right to calculate the correct

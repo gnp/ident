@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.gregorpurdy.ident
 
 import com.gregorpurdy.ccs.Modulus10DoubleAddDouble
 
+import scala.util.CommandLineParser
 import scala.util.matching.Regex
 
 /** A type for working with validated Committee on Uniform Security Identification Procedures (CUSIP) identifiers as
@@ -187,7 +188,7 @@ object CusipError {
   }
 }
 
-object Cusip extends CusipVersionSpecific {
+object Cusip {
   import CusipError.*
 
   val issuerFormat: Regex = "([A-Z0-9]{6})".r
@@ -196,6 +197,18 @@ object Cusip extends CusipVersionSpecific {
   val checkDigitFormat: Regex = "([0-9])".r
   val cusipFormat: Regex = "([A-Z0-9]{6})([A-Z0-9]{2})([0-9])".r
   val cusipFormatFull: Regex = "([A-Z0-9]{8}[0-9])".r
+
+  given Ordering[Cusip] = Ordering.by(_.value)
+
+  object CusipCommandLineParserFromString extends CommandLineParser.FromString[Cusip] {
+    def fromString(s: String): Cusip = Cusip.fromString(s) match {
+      case Left(err)    => throw new IllegalArgumentException(err.toString)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Cusip] = Cusip.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Cusip] = CusipCommandLineParserFromString
 
   def calculateCheckDigitFromPayloadParts(
       issuer: String,

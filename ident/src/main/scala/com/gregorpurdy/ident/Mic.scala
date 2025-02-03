@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Gregor Purdy
+ * Copyright 2023-2025 Gregor Purdy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.gregorpurdy.ident
 
+import scala.util.CommandLineParser
 import scala.util.matching.Regex
 
 /** An ISO 10383 2012 identifier. The format is exactly four alphanumeric characters with no internal structure.
@@ -28,12 +29,24 @@ final case class Mic private (value: String) {
   def toStringTagged: String = s"mic:$value"
 }
 
-object Mic extends MicVersionSpecific {
+object Mic {
 
   /** This will only consider `value` valid if it has no whitespace, all letters are already uppercase, the length is 4
     * and all characters are ASCII alphanumeric.
     */
   val MicFormat: Regex = "([A-Z0-9]{4})".r
+
+  given Ordering[Mic] = Ordering.by(_.value)
+
+  object MicCommandLineParserFromString extends CommandLineParser.FromString[Mic] {
+    def fromString(s: String): Mic = Mic.fromString(s) match {
+      case Left(s)      => throw new IllegalArgumentException(s)
+      case Right(ident) => ident
+    }
+    override def fromStringOption(s: String): Option[Mic] = Mic.fromString(s).toOption
+  }
+
+  given CommandLineParser.FromString[Mic] = MicCommandLineParserFromString
 
   /** Attempt to parse `value` as a MIC, using loose validation. */
   def fromString(value: String): Either[String, Mic] =
