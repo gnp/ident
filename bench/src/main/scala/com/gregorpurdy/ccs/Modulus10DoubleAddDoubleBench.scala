@@ -17,25 +17,20 @@
 package com.gregorpurdy.ccs
 
 import org.openjdk.jmh.annotations.*
-import zio.Runtime
-import zio.Unsafe
-import zio.test.*
+import org.scalacheck.Gen
+import org.scalacheck.rng.Seed
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Array(Mode.AverageTime))
 class Modulus10DoubleAddDoubleBench {
-  val iterations = 10000
-  val size = 1000000
-  val effect = Gen.alphaNumericStringBounded(8, 8).runCollectN(size).map(_.map(_.toUpperCase))
+  val iterations = 100 // 10000
+  val size = 1000 // 1000000
 
-  val cases = Unsafe
-    .unsafe { implicit unsafe =>
-      Runtime.default.unsafe
-        .run(
-          effect.provideLayer(TestRandom.deterministic)
-        )
-        .getOrThrowFiberFailure()
-    }
+  // Generate test data using ScalaCheck
+  val cases = Gen
+    .listOfN(size, Gen.stringOfN(8, Gen.alphaNumChar))
+    .map(_.map(_.toUpperCase))
+    .pureApply(Gen.Parameters.default, Seed.random())
 
   @Benchmark def cusipCalculate(): Unit = for (_ <- 1 to iterations) {
     cases.foreach(input => Modulus10DoubleAddDouble.CusipVariant.calculate(input))

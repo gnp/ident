@@ -119,7 +119,7 @@ lazy val bench = (project in file("bench"))
     publishLocal := {},
     scalacOptions := stdCompilerOptions3,
     libraryDependencies ++= Seq(
-      ZioTest % Compile
+      ScalaCheck % Compile
     )
   )
 
