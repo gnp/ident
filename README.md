@@ -149,7 +149,7 @@ licensed as above, without any additional terms or conditions.
 
 ## Copyright
 
-Copyright 2023 Gregor Purdy. All rights reserved.
+Copyright 2023-2025 Gregor Purdy. All rights reserved.
 
 [Badge-CI]: https://github.com/gnp/ident/workflows/CI/badge.svg
 [LICENSE-APACHE]: https://github.com/gnp/ident/blob/master/LICENSE-APACHE
