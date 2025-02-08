@@ -23,31 +23,53 @@ import org.scalatest.matchers.*
 class EinSpec extends AnyFunSpec with should.Matchers {
 
   describe("Ein") {
-    it("should parse valid EINs") {
-      Ein.parse("12-3456789") shouldBe Ein.fromParts("12", "3456789")
-      Ein.parse("123456789") shouldBe Ein.fromParts("12", "3456789")
-      Ein.parse("02-3456789") shouldBe Ein.fromParts("02", "3456789")
-      Ein.parse("2-3456789") shouldBe Ein.fromParts("02", "3456789")
+    it("should handle Normal cases") {
+      Ein.fromString("12-3456789").toOption.get shouldBe a[Ein.Normal]
+      Ein.fromString("12-3456789").toOption.get.value shouldBe "12-3456789"
+
+      Ein.fromString("234567890").toOption.get shouldBe a[Ein.Normal]
+      Ein.fromString("234567890").toOption.get.value shouldBe "23-4567890"
+
+      Ein.fromString("03-4567890").toOption.get shouldBe a[Ein.Normal]
+      Ein.fromString("03-4567890").toOption.get.value shouldBe "03-4567890"
+
+      Ein.fromString("4-5678901").toOption.get shouldBe a[Ein.Normal]
+      Ein.fromString("4-5678901").toOption.get.value shouldBe "04-5678901"
     }
 
-    it("should handle None cases") {
-      Ein.parseOptional("0-0000000") shouldBe Right(None)
-      Ein.parseOptional("1-1111111") shouldBe Right(None)
-      Ein.parseOptional("4-4444444") shouldBe Right(None)
+    it("should handle Reserved cases") {
+      Ein.fromString("0-0000000").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("0-0000000").toOption.get.value shouldBe "00-0000000"
 
-      Ein.parseOptional("00-0000000") shouldBe Right(None)
-      Ein.parseOptional("01-1111111") shouldBe Right(None)
-      Ein.parseOptional("04-4444444") shouldBe Right(None)
+      Ein.fromString("1-1111111").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("1-1111111").toOption.get.value shouldBe "01-1111111"
 
-      Ein.parseOptional("11-1111111") shouldBe Right(None)
-      Ein.parseOptional("88-8888888") shouldBe Right(None)
-      Ein.parseOptional("99-9999999") shouldBe Right(None)
+      Ein.fromString("4-4444444").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("4-4444444").toOption.get.value shouldBe "04-4444444"
+
+      Ein.fromString("00-0000000").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("00-0000000").toOption.get.value shouldBe "00-0000000"
+
+      Ein.fromString("01-1111111").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("01-1111111").toOption.get.value shouldBe "01-1111111"
+
+      Ein.fromString("04-4444444").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("04-4444444").toOption.get.value shouldBe "04-4444444"
+
+      Ein.fromString("11-1111111").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("11-1111111").toOption.get.value shouldBe "11-1111111"
+
+      Ein.fromString("88-8888888").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("88-8888888").toOption.get.value shouldBe "88-8888888"
+
+      Ein.fromString("99-9999999").toOption.get shouldBe a[Ein.Reserved]
+      Ein.fromString("99-9999999").toOption.get.value shouldBe "99-9999999"
     }
 
     it("should reject invalid formats") {
-      Ein.parse("123-456789") shouldBe a[Left[?, ?]]
-      Ein.parse("1234-56789") shouldBe a[Left[?, ?]]
-      Ein.parse("ab-1234567") shouldBe a[Left[?, ?]]
+      Ein.fromString("123-456789") shouldBe a[Left[?, ?]]
+      Ein.fromString("1234-56789") shouldBe a[Left[?, ?]]
+      Ein.fromString("ab-1234567") shouldBe a[Left[?, ?]]
     }
 
     it("should support ordering") {
