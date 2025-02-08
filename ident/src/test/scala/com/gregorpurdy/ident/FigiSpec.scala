@@ -21,7 +21,7 @@ import org.scalatest.matchers.*
 
 class FigiSpec extends AnyFunSpec with should.Matchers {
 
-  describe("FigiSpec") {
+  describe("Figi") {
     it("Parse and validate the FIGI for ticker TNK (TeeKay Tankers)") {
       val figiString = "BBG000QRMZH1"
       val provider = "BB"
