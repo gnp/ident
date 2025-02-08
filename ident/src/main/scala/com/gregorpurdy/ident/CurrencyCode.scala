@@ -33,30 +33,26 @@ object CurrencyCodeAlpha3 {
 
   val format: Regex = "[A-Z]{3}".r
 
+  def fromString(value: String): Either[String, CurrencyCodeAlpha3] =
+    fromStringStrict(normalize(value))
+
+  def fromStringStrict(value: String): Either[String, CurrencyCodeAlpha3] =
+    if (!isValidFormatStrict(value))
+      Left(s"Format of '$value' is not valid")
+    else
+      Right(new CurrencyCodeAlpha3(value))
+
+  /** This returns true if the input String would be allowed as an argument to the apply() method.
+    */
+  def isValidFormat(string: String): Boolean =
+    format.matches(normalize(string))
+
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 3 and all characters are ASCII alphabetic. The apply() method is more permissive, because it will trim leading
     * and/or trailing whitespace and convert to uppercase before validating the CurrencyCodeAlpha3.
     */
   def isValidFormatStrict(string: String): Boolean =
     format.matches(string)
-
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
-    */
-  def isValidFormatLoose(string: String): Boolean =
-    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
-
-  def apply(
-      value: String
-  ): CurrencyCodeAlpha3 = {
-    val tempValue = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-    if (!isValidFormatStrict(tempValue))
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CurrencyCodeAlpha3(tempValue)
-  }
 
 }
 
@@ -72,6 +68,26 @@ object CurrencyCodeNumeric3 {
 
   val format: Regex = "[0-9]{3}".r
 
+  def fromShort(value: Short): Either[String, CurrencyCodeNumeric3] =
+    if (value < 0 || value > 999)
+      Left(s"Currency code numeric value must be between 0 and 999: $value")
+    else
+      Right(new CurrencyCodeNumeric3(value))
+
+  def fromString(value: String): Either[String, CurrencyCodeNumeric3] =
+    fromStringStrict(normalize(value))
+
+  def fromStringStrict(value: String): Either[String, CurrencyCodeNumeric3] =
+    if (!isValidFormatStrict(value))
+      Left(s"Format of '$value' is not valid")
+    else
+      Right(new CurrencyCodeNumeric3(value.toShort))
+
+  /** This returns true if the input String would be allowed as an argument to the apply() method.
+    */
+  def isValidFormatLoose(string: String): Boolean =
+    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
+
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 3 and all characters are ASCII numeric. The apply() method is more permissive, because it will trim leading and/or
     * trailing whitespace and convert to uppercase before validating the CountryCodeNumeric3.
@@ -79,52 +95,22 @@ object CurrencyCodeNumeric3 {
   def isValidFormatStrict(string: String): Boolean =
     format.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
-    */
-  def isValidFormatLoose(string: String): Boolean =
-    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
-
-  def apply(
-      value: String
-  ): CurrencyCodeNumeric3 = {
-    val tempValue = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-    if (!isValidFormatStrict(tempValue))
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CurrencyCodeNumeric3(tempValue.toShort)
-  }
-
-  def apply(
-      value: Short
-  ): CurrencyCodeNumeric3 = {
-    if (value < 0 || value > 999)
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CurrencyCodeNumeric3(value)
-  }
-
 }
 
 object CurrencyCode {
 
-  def apply(value: String): CurrencyCode = {
-    val temp = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
+  def fromString(value: String): Either[String, CurrencyCode] =
+    fromStringStrict(normalize(value))
 
-    if (CurrencyCodeAlpha3.format.matches(temp))
-      CurrencyCodeAlpha3(temp)
-    else if (CurrencyCodeNumeric3.format.matches(temp))
-      CurrencyCodeNumeric3(temp.toShort)
+  def fromStringStrict(value: String): Either[String, CurrencyCode] =
+    if (CurrencyCodeAlpha3.format.matches(value))
+      CurrencyCodeAlpha3.fromStringStrict(value)
+    else if (CurrencyCodeNumeric3.format.matches(value))
+      CurrencyCodeNumeric3.fromStringStrict(value)
     else
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-  }
+      Left(s"Format of '$value' is not valid")
 
-  def apply(value: Short): CurrencyCode = CurrencyCodeNumeric3(value)
+  def fromShort(value: Short): Either[String, CurrencyCode] =
+    CurrencyCodeNumeric3.fromShort(value)
 
 }

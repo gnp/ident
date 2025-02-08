@@ -36,30 +36,26 @@ object CountryCodeAlpha2 {
 
   val format: Regex = "[A-Z]{2}".r
 
+  def fromString(value: String): Either[String, CountryCodeAlpha2] =
+    fromStringStrict(normalize(value))
+
+  def fromStringStrict(value: String): Either[String, CountryCodeAlpha2] =
+    if (!isValidFormatStrict(value))
+      Left(s"Format of '$value' is not valid")
+    else
+      Right(new CountryCodeAlpha2(value))
+
+  /** This returns true if the input String would be allowed as an argument to the apply() method.
+    */
+  def isValidFormat(string: String): Boolean =
+    format.matches(normalize(string))
+
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 2 and all characters are ASCII alphabetic. The apply() method is more permissive, because it will trim leading
     * and/or trailing whitespace and convert to uppercase before validating the CountryCodeAlpha2.
     */
   def isValidFormatStrict(string: String): Boolean =
     format.matches(string)
-
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
-    */
-  def isValidFormatLoose(string: String): Boolean =
-    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
-
-  def apply(
-      value: String
-  ): CountryCodeAlpha2 = {
-    val tempValue = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-    if (!isValidFormatStrict(tempValue))
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CountryCodeAlpha2(tempValue)
-  }
 
 }
 
@@ -78,6 +74,11 @@ object CountryCodeAlpha3 {
 
   val format: Regex = "[A-Z]{3}".r
 
+  /** This returns true if the input String would be allowed as an argument to the apply() method.
+    */
+  def isValidFormat(string: String): Boolean =
+    format.matches(normalize(string))
+
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 3 and all characters are ASCII alphabetic. The apply() method is more permissive, because it will trim leading
     * and/or trailing whitespace and convert to uppercase before validating the CountryCodeAlpha3.
@@ -85,23 +86,14 @@ object CountryCodeAlpha3 {
   def isValidFormatStrict(string: String): Boolean =
     format.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
-    */
-  def isValidFormatLoose(string: String): Boolean =
-    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
+  def fromString(value: String): Either[String, CountryCodeAlpha3] =
+    fromStringStrict(normalize(value))
 
-  def apply(
-      value: String
-  ): CountryCodeAlpha3 = {
-    val tempValue = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-    if (!isValidFormatStrict(tempValue))
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CountryCodeAlpha3(tempValue)
-  }
+  def fromStringStrict(value: String): Either[String, CountryCodeAlpha3] =
+    if (!isValidFormatStrict(value))
+      Left(s"Format of '$value' is not valid")
+    else
+      Right(new CountryCodeAlpha3(value))
 
 }
 
@@ -120,6 +112,26 @@ object CountryCodeNumeric3 {
 
   val format: Regex = "[0-9]{3}".r
 
+  def fromShort(value: Short): Either[String, CountryCodeNumeric3] =
+    if (value < 0 || value > 999)
+      Left(s"Country code numeric value must be between 0 and 999: $value")
+    else
+      Right(new CountryCodeNumeric3(value))
+
+  def fromString(value: String): Either[String, CountryCodeNumeric3] =
+    fromStringStrict(normalize(value))
+
+  def fromStringStrict(value: String): Either[String, CountryCodeNumeric3] =
+    if (!isValidFormatStrict(value))
+      Left(s"Format of '$value' is not valid")
+    else
+      Right(new CountryCodeNumeric3(value.toShort))
+
+  /** This returns true if the input String would be allowed as an argument to the apply() method.
+    */
+  def isValidFormat(string: String): Boolean =
+    format.matches(normalize(string))
+
   /** This will only return true if the input String has no whitespace, all letters are already uppercase, the length is
     * 3 and all characters are ASCII numeric. The apply() method is more permissive, because it will trim leading and/or
     * trailing whitespace and convert to uppercase before validating the CountryCodeNumeric3.
@@ -127,54 +139,24 @@ object CountryCodeNumeric3 {
   def isValidFormatStrict(string: String): Boolean =
     format.matches(string)
 
-  /** This returns true if the input String would be allowed as an argument to the apply() method.
-    */
-  def isValidFormatLoose(string: String): Boolean =
-    format.matches(string.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase)
-
-  def apply(
-      value: String
-  ): CountryCodeNumeric3 = {
-    val tempValue = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
-
-    if (!isValidFormatStrict(tempValue))
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CountryCodeNumeric3(tempValue.toShort)
-  }
-
-  def apply(
-      value: Short
-  ): CountryCodeNumeric3 = {
-    if (value < 0 || value > 999)
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-
-    new CountryCodeNumeric3(value)
-  }
-
 }
 
 object CountryCode {
 
-  def apply(value: String): CountryCode = {
-    val temp = value.replaceAll("""(\h|\v)+""", " ").trim.toUpperCase
+  def fromShort(value: Short): Either[String, CountryCode] =
+    CountryCodeNumeric3.fromShort(value)
 
-    if (CountryCodeAlpha2.format.matches(temp))
-      CountryCodeAlpha2(temp)
-    else if (CountryCodeAlpha3.format.matches(temp))
-      CountryCodeAlpha3(temp)
-    else if (CountryCodeNumeric3.format.matches(temp))
-      CountryCodeNumeric3(temp.toShort)
+  def fromString(value: String): Either[String, CountryCode] =
+    fromStringStrict(normalize(value))
+
+  def fromStringStrict(value: String): Either[String, CountryCode] =
+    if (CountryCodeAlpha2.format.matches(value))
+      CountryCodeAlpha2.fromStringStrict(value)
+    else if (CountryCodeAlpha3.format.matches(value))
+      CountryCodeAlpha3.fromStringStrict(value)
+    else if (CountryCodeNumeric3.format.matches(value))
+      CountryCodeNumeric3.fromShort(value.toShort)
     else
-      throw new IllegalArgumentException(
-        s"Format of '$value' is not valid"
-      )
-  }
-
-  def apply(value: Short): CountryCode = CountryCodeNumeric3(value)
+      Left(s"Format of '$value' is not valid")
 
 }

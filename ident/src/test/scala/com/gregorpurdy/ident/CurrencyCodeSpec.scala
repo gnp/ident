@@ -24,13 +24,13 @@ class CurrencyCodeSpec extends AnyFunSpec with should.Matchers {
 
   describe("CurrencyCode") {
     it("should correctly uppercase an alpha-3 input") {
-      val code = CurrencyCodeAlpha3("usd")
+      val code = CurrencyCodeAlpha3.fromString("usd").toOption.get
 
       assert(code.value === "USD")
     }
 
     it("should render numeric codes as strings with leading zeros") {
-      val code = CurrencyCodeNumeric3(4: Short)
+      val code = CurrencyCodeNumeric3.fromShort(4: Short).toOption.get
 
       assert(code.toString === "004")
     }

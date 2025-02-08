@@ -24,19 +24,19 @@ class CountryCodeSpec extends AnyFunSpec with should.Matchers {
 
   describe("CountryCode") {
     it("should correctly uppercase an alpha-2 input") {
-      val code = CountryCodeAlpha2("us")
+      val code = CountryCodeAlpha2.fromString("us").toOption.get
 
       assert(code.value === "US")
     }
 
     it("should correctly uppercase an alpha-3 input") {
-      val code = CountryCodeAlpha3("usa")
+      val code = CountryCodeAlpha3.fromString("usa").toOption.get
 
       assert(code.value === "USA")
     }
 
     it("should render numeric codes as strings with leading zeros") {
-      val code = CountryCodeNumeric3(4: Short)
+      val code = CountryCodeNumeric3.fromShort(4: Short).toOption.get
 
       assert(code.toString === "004")
     }
